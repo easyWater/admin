@@ -39,7 +39,40 @@
             </ul>
         </section>
       </section>
-      <section class="narrow"></section>
+      <section class="narrow">
+        <section class="inner">
+          <h4>
+            <img src="../statics/images/avatar.jpg" alt="">
+          </h4>
+          <ul class="menu">
+            <li class="active">
+              <a href="javascript: void(0);"><i class="iconfont icon-yibiaopan1"></i></a>
+            </li>
+            <li>
+              <a href="javascript: void(0);"><i class="iconfont icon-tuding"></i></a>
+              <ul>
+                <li><a href="javascript: void(0);">所有文章</a></li>
+                <li><a href="javascript: void(0);">写文章</a></li>
+                <li><a href="javascript: void(0);">分类目录</a></li>
+                <li><a href="javascript: void(0);">标签</a></li>
+              </ul>
+            </li>
+            <li>
+              <a href="javascript: void(0);"><i class="iconfont icon-pinglun"></i></a>
+            </li>
+            <li>
+              <a href="javascript: void(0);"><i class="iconfont icon-yonghu1"></i></a>
+            </li>
+            <li>
+              <a href="javascript: void(0);"><i class="iconfont icon-shezhi"></i></a>
+              <ul>
+                <li><a href="javascript: void(0);">网站设置</a></li>
+                <li><a href="javascript: void(0);">导航菜单</a></li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+      </section>
     </section>
     <!-- 右侧 -->
     <section class="main">
@@ -106,12 +139,24 @@ export default {
     },
     switchAside() { //切换侧边栏
       $('.main>.top>.lf').on('click', function() {
+        if($('.sideBar').hasClass('isAside')) {
+          $('.sideBar').css({width: '180px'})
+          $('.sideBar>.normal').show()
+          $('.sideBar>.narrow').hide()
+          $('.main').css({
+              width: 'calc(100% - 180px)'
+            })
+          $('.sideBar').removeClass('isAside')
+        }else {
           $('.sideBar').css({width: '46px'})
           $('.sideBar>.normal').hide()
           $('.sideBar>.narrow').show()
           $('.main').css({
               width: 'calc(100% - 46px)'
             })
+          $('.sideBar').addClass('isAside')
+        }
+          
       })
     }
   }
@@ -129,7 +174,7 @@ html {
   height: 100%;
   .sideBar {
     width: 180px;
-    // transition: all .5s;
+    transition: all .5s;
     height: 100%;
     float: left;
     .normal,
@@ -224,12 +269,57 @@ html {
     .narrow {
       width: 46px;
       display: none;
+      overflow: hidden;
+      >.inner {
+        height: 100%;
+        overflow-y: scroll;
+        margin-right: -17px;
+        padding-top: 8px;
+        h4 {
+          margin-bottom: 10px;
+          img {
+            display: block;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            margin: 0 auto;
+          }
+        }
+        >.menu {
+          li {
+            a {
+              display: block;
+              text-align: center;
+              .iconfont {
+                font-size: 20px;
+                line-height: 40px;
+                &.icon-yibiaopan1{
+                  font-size: 25px;
+                }
+                &.icon-tuding {
+                  font-size: 23px;
+                }
+                &.icon-pinglun {
+                  font-size: 16px;
+                }
+              }
+            }
+            &:hover {
+              
+            }
+            ul {
+              display: none;
+            }
+          }
+        }
+      }
     }
   }
   .main {
     float: right;
     height: 100%;
     width: calc(100% - 180px);
+    transition: all .5s;
     .top {
       height: 50px;
       background-color: #fff;
