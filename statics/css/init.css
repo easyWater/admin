@@ -1,0 +1,67 @@
+body,
+div,
+p,
+ul,
+ol,
+dl,
+li,
+dt,
+dd,
+span,
+i,
+input,
+textarea,
+img,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+a {
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  color: #999;
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: normal;
+}
+
+input,
+textarea {
+  border: 0;
+  outline: none;
+}
+
+ul,
+ol,
+dl {
+  list-style: none;
+}
+
+img {
+  vertical-align: middle;
+  border: none;
+}
+
+.clearfix {
+  *zoom: 1;
+}
+
+.clearfix:after {
+  height: 0;
+  display: block;
+  visibility: hidden;
+  content: "";
+  clear: both;
+}
