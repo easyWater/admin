@@ -12,10 +12,10 @@
             </section>
             <ul class="menu">
               <li class="active">
-                <a href="javascript: void(0);"><i class="iconfont icon-yibiaopan1 lf"></i>仪表盘</a>
+                <a href="javascript: void(0);" class="a-menu"><i class="iconfont icon-yibiaopan1 lf"></i>仪表盘</a>
               </li>
               <li>
-                <a href="javascript: void(0);"><i class="iconfont icon-tuding lf"></i>文章<i class="iconfont icon-you rg"></i></a>
+                <a href="javascript: void(0);" class="a-menu"><i class="iconfont icon-tuding lf"></i>文章<i class="iconfont icon-you rg"></i></a>
                 <ul>
                   <li><a href="javascript: void(0);">所有文章</a></li>
                   <li><a href="javascript: void(0);">写文章</a></li>
@@ -24,13 +24,13 @@
                 </ul>
               </li>
               <li>
-                <a href="javascript: void(0);"><i class="iconfont icon-pinglun lf"></i>评论</a>
+                <a href="javascript: void(0);" class="a-menu"><i class="iconfont icon-pinglun lf"></i>评论</a>
               </li>
               <li>
-                <a href="javascript: void(0);"><i class="iconfont icon-yonghu1 lf"></i>用户</a>
+                <a href="javascript: void(0);" class="a-menu"><i class="iconfont icon-yonghu1 lf"></i>用户</a>
               </li>
               <li>
-                <a href="javascript: void(0);"><i class="iconfont icon-shezhi lf"></i>设置<i class="iconfont icon-xia rg"></i></a>
+                <a href="javascript: void(0);" class="a-menu"><i class="iconfont icon-shezhi lf"></i>设置<i class="iconfont icon-you rg"></i></a>
                 <ul>
                   <li><a href="javascript: void(0);">网站设置</a></li>
                   <li><a href="javascript: void(0);">导航菜单</a></li>
@@ -39,7 +39,7 @@
             </ul>
         </section>
       </section>
-      <!-- <section class="narrow"></section> -->
+      <section class="narrow"></section>
     </section>
     <!-- 右侧 -->
     <section class="main">
@@ -61,7 +61,60 @@
 
 <script>
 export default {
-  name: "app"
+  name: "app",
+  mounted() {
+    this.choiceMenu();
+    this.switchAside()
+  },
+  methods: {
+    choiceMenu() {
+      $(".menu>li").on("click", function(e) { //点击菜单
+        if ($(e.target).hasClass("a-menu")) {
+          $(this)
+            .addClass("active")
+            .siblings()
+            .removeClass("active");
+
+          //其他兄弟元素二级菜单状态调整
+          $(this)
+            .siblings()
+            .find("ul")
+            .slideUp();
+
+          //自身二级菜单状态调整
+          $(this)
+            .find("ul")
+            .stop()
+            .slideToggle();      
+
+          //调整自身右图标的方向
+          if($(this).find('.iconfont.rg').hasClass('unfold')) { //改为右,收起
+            $(this).find('.iconfont.rg').removeClass('unfold')
+          }else { //改为下,展开
+            $(this).find('.iconfont.rg').addClass('unfold')
+          }
+
+          //调整其他兄弟元素右图标的方向
+          $(this).siblings().find('.iconfont.rg').removeClass('unfold')
+
+        }
+      });
+      $(".menu>li").find('a>.iconfont.rg').on('click', function() { //由于右侧图标浮动，需添加点击事件与一级菜单a保持一致
+        $(this).addClass("a-menu")
+        $($(this).parent().parent()[0]).trigger('click')  
+      })
+    },
+    switchAside() { //切换侧边栏
+      $('.main>.top>.lf').on('click', function() {
+          $('.sideBar').css({width: '46px'})
+          $('.sideBar>.normal').hide()
+          $('.sideBar>.narrow').show()
+          $('.main').css({
+              width: 'calc(100% - 46px)'
+            })
+      })
+    }
+  }
 };
 </script>
 
@@ -75,6 +128,8 @@ html {
 #app {
   height: 100%;
   .sideBar {
+    width: 180px;
+    // transition: all .5s;
     height: 100%;
     float: left;
     .normal,
@@ -102,7 +157,7 @@ html {
               border-radius: 50%;
               display: block;
               margin: 0 auto;
-              border: 3px solid rgba(255, 255, 255, .3);
+              border: 3px solid rgba(255, 255, 255, 0.3);
             }
             h4 {
               font-size: 16px;
@@ -113,10 +168,10 @@ html {
           }
         }
         .menu {
-          padding: 10px 0px; 
-          >li {
+          padding: 10px 0px;
+          > li {
             margin-top: 1px;
-            a {              
+            a {
               display: block;
               line-height: 40px;
               padding: 0px 20px;
@@ -132,20 +187,26 @@ html {
               .iconfont.rg {
                 float: right;
                 font-size: 18px;
+                transform: rotate(0deg);
+                transition: all .3s;
+                &.unfold {
+                  transform: rotate(90deg);
+                }
               }
             }
             &:first-child {
               margin-top: 0px;
             }
-            &.active a {
+            &.active > a {
               color: #f6f6f6;
-              background-color: #243443;
+              background-color: #213140;
             }
             &:hover {
               color: #f6f6f6;
-              background-color: #243443;
+              background-color: #213140;
             }
-            >ul {
+            > ul {
+              display: none;
               background-color: #243443;
               box-shadow: inset 0 1px 3px #111e29;
               li {
@@ -162,6 +223,7 @@ html {
     }
     .narrow {
       width: 46px;
+      display: none;
     }
   }
   .main {
@@ -176,6 +238,7 @@ html {
       > .lf {
         float: left;
         padding-left: 22px;
+        cursor: pointer;
         .iconfont {
           line-height: 48px;
           font-size: 16px;
