@@ -12,12 +12,12 @@
             </section>
             <ul class="menu">
               <li class="active">
-                <a href="javascript: void(0);" class="a-menu"><i class="iconfont icon-yibiaopan1 lf"></i>仪表盘</a>
+                <router-link to="/dashboard" class="a-menu"><i class="iconfont icon-yibiaopan1 lf"></i>仪表盘</router-link>
               </li>
               <li>
                 <a href="javascript: void(0);" class="a-menu"><i class="iconfont icon-tuding lf"></i>文章<i class="iconfont icon-you rg"></i></a>
                 <ul>
-                  <li><a href="javascript: void(0);">所有文章</a></li>
+                  <li><router-link to="/article">所有文章</router-link></li>
                   <li><a href="javascript: void(0);">写文章</a></li>
                   <li><a href="javascript: void(0);">分类目录</a></li>
                   <li><a href="javascript: void(0);">标签</a></li>
@@ -51,7 +51,7 @@
               <a href="javascript: void(0);"><i class="iconfont icon-tuding"></i></a>
               <ul>
                 <li><h5>文章</h5></li>
-                <li><a href="javascript: void(0);">所有文章</a></li>
+                <li class="active"><a href="javascript: void(0);">所有文章</a></li>
                 <li><a href="javascript: void(0);">写文章</a></li>
                 <li><a href="javascript: void(0);">分类目录</a></li>
                 <li><a href="javascript: void(0);">标签</a></li>
@@ -85,7 +85,7 @@
       </section>
       <section class="body">
        <section class="inner">
-
+          <router-view></router-view>          
        </section>
       </section>
     </section>
@@ -223,6 +223,7 @@ html {
               display: block;
               margin: 0 auto;
               border: 3px solid rgba(255, 255, 255, 0.3);
+              box-sizing: border-box;
             }
             h4 {
               font-size: 16px;
@@ -274,11 +275,16 @@ html {
               display: none;
               background-color: #243443;
               box-shadow: inset 0 1px 3px #111e29;
+              padding: 8px 0px;
               li {
                 a {
                   display: block;
                   padding-left: 30px;
                   line-height: 37px;
+                }
+                &:hover a {
+                  color: #f6f6f6;
+                  background-color: #213140;
                 }
               }
             }
@@ -329,6 +335,16 @@ html {
             min-width: 120px;
             background-color: #2f4050;
             > li {
+              &:hover {
+                a {
+                  color: #f6f6f6;
+                }
+              }
+              &.active {
+                a {
+                  color: #5ad0c3;
+                }
+              }
               > a {
                 display: block;
                 line-height: 30px;
@@ -441,6 +457,8 @@ html {
       > .inner {
         height: 100%;
         overflow-y: scroll;
+        padding: 20px 5px;
+        margin-right: -17px;
       }
     }
   }
