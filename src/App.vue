@@ -211,8 +211,8 @@ html {
         margin-right: -17px;
         .head {
           padding: 25px;
-          width: 130px;
-          height: 127px;
+          // width: 130px;
+          // height: 127px;
           background-color: #243443;
           a {
             display: block;

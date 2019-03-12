@@ -27,7 +27,7 @@ export default {
 }
 </script>
 
-<style lang="scss" type="text/css">
+<style lang="scss" type="text/css" scoped>
 .dashboard {
     padding: 0px 15px;
     .slogan {

@@ -39,7 +39,7 @@
 export default {};
 </script>
 
-<style lang="scss" type="text/css">
+<style lang="scss" type="text/css" scoped>
 .article {
   padding: 0px 15px;
   .heade {
