@@ -40,17 +40,17 @@
         </section>
       </section>
       <section class="narrow">
-        <section class="inner">
           <h4>
             <img src="../statics/images/avatar.jpg" alt="">
           </h4>
           <ul class="menu">
-            <li class="active">
+            <li>
               <a href="javascript: void(0);"><i class="iconfont icon-yibiaopan1"></i></a>
             </li>
-            <li>
+            <li class="active">
               <a href="javascript: void(0);"><i class="iconfont icon-tuding"></i></a>
               <ul>
+                <li><h5>文章</h5></li>
                 <li><a href="javascript: void(0);">所有文章</a></li>
                 <li><a href="javascript: void(0);">写文章</a></li>
                 <li><a href="javascript: void(0);">分类目录</a></li>
@@ -66,12 +66,12 @@
             <li>
               <a href="javascript: void(0);"><i class="iconfont icon-shezhi"></i></a>
               <ul>
+                <li><h5>设置</h5></li>
                 <li><a href="javascript: void(0);">网站设置</a></li>
                 <li><a href="javascript: void(0);">导航菜单</a></li>
               </ul>
             </li>
           </ul>
-        </section>
       </section>
     </section>
     <!-- 右侧 -->
@@ -97,11 +97,12 @@ export default {
   name: "app",
   mounted() {
     this.choiceMenu();
-    this.switchAside()
+    this.switchAside();
   },
   methods: {
     choiceMenu() {
-      $(".menu>li").on("click", function(e) { //点击菜单
+      $(".menu>li").on("click", function(e) {
+        //点击菜单
         if ($(e.target).hasClass("a-menu")) {
           $(this)
             .addClass("active")
@@ -118,46 +119,65 @@ export default {
           $(this)
             .find("ul")
             .stop()
-            .slideToggle();      
+            .slideToggle();
 
           //调整自身右图标的方向
-          if($(this).find('.iconfont.rg').hasClass('unfold')) { //改为右,收起
-            $(this).find('.iconfont.rg').removeClass('unfold')
-          }else { //改为下,展开
-            $(this).find('.iconfont.rg').addClass('unfold')
+          if (
+            $(this)
+              .find(".iconfont.rg")
+              .hasClass("unfold")
+          ) {
+            //改为右,收起
+            $(this)
+              .find(".iconfont.rg")
+              .removeClass("unfold");
+          } else {
+            //改为下,展开
+            $(this)
+              .find(".iconfont.rg")
+              .addClass("unfold");
           }
 
           //调整其他兄弟元素右图标的方向
-          $(this).siblings().find('.iconfont.rg').removeClass('unfold')
-
+          $(this)
+            .siblings()
+            .find(".iconfont.rg")
+            .removeClass("unfold");
         }
       });
-      $(".menu>li").find('a>.iconfont.rg').on('click', function() { //由于右侧图标浮动，需添加点击事件与一级菜单a保持一致
-        $(this).addClass("a-menu")
-        $($(this).parent().parent()[0]).trigger('click')  
-      })
+      $(".menu>li")
+        .find("a>.iconfont.rg")
+        .on("click", function() {
+          //由于右侧图标浮动，需添加点击事件与一级菜单a保持一致
+          $(this).addClass("a-menu");
+          $(
+            $(this)
+              .parent()
+              .parent()[0]
+          ).trigger("click");
+        });
     },
-    switchAside() { //切换侧边栏
-      $('.main>.top>.lf').on('click', function() {
-        if($('.sideBar').hasClass('isAside')) {
-          $('.sideBar').css({width: '180px'})
-          $('.sideBar>.normal').show()
-          $('.sideBar>.narrow').hide()
-          $('.main').css({
-              width: 'calc(100% - 180px)'
-            })
-          $('.sideBar').removeClass('isAside')
-        }else {
-          $('.sideBar').css({width: '46px'})
-          $('.sideBar>.normal').hide()
-          $('.sideBar>.narrow').show()
-          $('.main').css({
-              width: 'calc(100% - 46px)'
-            })
-          $('.sideBar').addClass('isAside')
+    switchAside() {
+      //切换侧边栏
+      $(".main>.top>.lf").on("click", function() {
+        if ($(".sideBar").hasClass("isAside")) {
+          $(".sideBar").css({ width: "180px" });
+          $(".sideBar>.normal").show();
+          $(".sideBar>.narrow").hide();
+          $(".main").css({
+            width: "calc(100% - 180px)"
+          });
+          $(".sideBar").removeClass("isAside");
+        } else {
+          $(".sideBar").css({ width: "46px" });
+          $(".sideBar>.normal").hide();
+          $(".sideBar>.narrow").show();
+          $(".main").css({
+            width: "calc(100% - 46px)"
+          });
+          $(".sideBar").addClass("isAside");
         }
-          
-      })
+      });
     }
   }
 };
@@ -174,7 +194,7 @@ html {
   height: 100%;
   .sideBar {
     width: 180px;
-    transition: all .5s;
+    transition: all 0.5s;
     height: 100%;
     float: left;
     .normal,
@@ -233,7 +253,7 @@ html {
                 float: right;
                 font-size: 18px;
                 transform: rotate(0deg);
-                transition: all .3s;
+                transition: all 0.3s;
                 &.unfold {
                   transform: rotate(90deg);
                 }
@@ -269,46 +289,100 @@ html {
     .narrow {
       width: 46px;
       display: none;
-      overflow: hidden;
-      >.inner {
-        height: 100%;
-        overflow-y: scroll;
-        margin-right: -17px;
-        padding-top: 8px;
-        h4 {
-          margin-bottom: 10px;
-          img {
-            display: block;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            margin: 0 auto;
-          }
+      h4 {
+        margin-bottom: 10px;
+        img {
+          display: block;
+          width: 35px;
+          height: 35px;
+          border-radius: 50%;
+          margin: 0 auto;
         }
-        >.menu {
-          li {
-            a {
-              display: block;
-              text-align: center;
-              .iconfont {
-                font-size: 20px;
-                line-height: 40px;
-                &.icon-yibiaopan1{
-                  font-size: 25px;
-                }
-                &.icon-tuding {
-                  font-size: 23px;
-                }
-                &.icon-pinglun {
-                  font-size: 16px;
-                }
+      }
+      > .menu {
+        > li {
+          position: relative;
+          margin-top: 1px;
+          > a {
+            display: block;
+            text-align: center;
+            color: #a9b0c2;
+            .iconfont {
+              font-size: 20px;
+              line-height: 40px;
+              &.icon-yibiaopan1 {
+                font-size: 25px;
+              }
+              &.icon-tuding {
+                font-size: 23px;
+              }
+              &.icon-pinglun {
+                font-size: 16px;
               }
             }
-            &:hover {
-              
+          }
+          > ul {
+            display: none;
+            position: absolute;
+            left: 46px;
+            top: 0px;
+            min-width: 120px;
+            background-color: #2f4050;
+            > li {
+              > a {
+                display: block;
+                line-height: 30px;
+                color: #a9b0c2;
+                font-size: 14px;
+                padding-left: 15px;
+              }
+              h5 {
+                padding-left: 15px;
+                font-size: 14px;
+                color: #f6f6f6;
+                line-height: 40px;
+                background-color: #213140;
+              }
+            }
+          }
+          &:hover {
+            > a {
+              background-color: #213140;
+              color: #f6f6f6;
             }
             ul {
-              display: none;
+              display: block;
+            }
+          }
+          &.active {
+            > a {
+              background-color: #5ad0c3;
+              color: #f6f6f6;
+              position: relative;
+              &::after {
+                content: "";
+                position: absolute;
+                right: 0px;
+                top: 15px;
+                border-top: 4px solid transparent;
+                border-left: 4px solid transparent;
+                border-bottom: 4px solid transparent;
+                border-right: 4px solid #f8f9fb;
+              }
+            }
+          }
+          &.active:hover {
+            > a {
+              &::after {
+                display: none;
+              }
+            }
+            > ul {
+              li {
+                h5 {
+                  background-color: #5ad0c3;
+                }
+              }
             }
           }
         }
@@ -319,7 +393,7 @@ html {
     float: right;
     height: 100%;
     width: calc(100% - 180px);
-    transition: all .5s;
+    transition: all 0.5s;
     .top {
       height: 50px;
       background-color: #fff;
