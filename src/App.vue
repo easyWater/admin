@@ -18,7 +18,7 @@
                 <a href="javascript: void(0);" class="a-menu"><i class="iconfont icon-tuding lf"></i>文章<i class="iconfont icon-you rg"></i></a>
                 <ul>
                   <li><router-link to="/article">所有文章</router-link></li>
-                  <li><a href="javascript: void(0);">写文章</a></li>
+                  <li><router-link to="/addArticle">写文章</router-link></li>
                   <li><a href="javascript: void(0);">分类目录</a></li>
                   <li><a href="javascript: void(0);">标签</a></li>
                 </ul>
@@ -463,4 +463,25 @@ html {
     }
   }
 }
+.pageTitle {
+    margin-bottom: 20px;
+    h2 {
+      color: #333333;
+      font-size: 24px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    a {
+      color: #fff;
+      background-color: #40586d;
+      border: 1px solid #374b5d;
+      font-size: 12px;
+      margin-left: 10px;
+      padding: 0px 5px;
+      line-height: 20px;
+      border-radius: 3px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+  }
 </style>
