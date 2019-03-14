@@ -17,10 +17,10 @@
               <li>
                 <a href="javascript: void(0);" class="a-menu"><i class="iconfont icon-tuding lf"></i>文章<i class="iconfont icon-you rg"></i></a>
                 <ul>
-                  <li><router-link to="/article">所有文章</router-link></li>
+                  <li><router-link to="/article/list">所有文章</router-link></li>
                   <li><router-link to="/addArticle">写文章</router-link></li>
                   <li><router-link to="/catalog">分类目录</router-link></li>
-                  <li><router-link to="/recycle">回收站</router-link></li>
+                  <li><router-link to="/article/recycle">回收站</router-link></li>
                 </ul>
               </li>
               <li>

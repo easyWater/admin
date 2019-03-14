@@ -1,34 +1,25 @@
 <template>
     <section class="article">
         <section class="pageTitle">
-            <h2>所有文章 </h2>
-            <a href="javascript: void(0);">写文章</a>
+            <h2 v-cloak>{{isRecycle ? '回收站' : '所有文章'}}</h2>
+            <a v-if="!isRecycle" href="javascript: void(0);">写文章</a>
         </section>
         <section class="toolbar">
-            <Button type="error">批量删除</Button>
-            <Dropdown style="margin-left: 12px">
-                <Button>
-                    所有分类
-                    <Icon type="ios-arrow-down"></Icon>
-                </Button>
-                <DropdownMenu slot="list">
-                    <DropdownItem>分类1</DropdownItem>
-                    <DropdownItem>分类2</DropdownItem>                    
-                    <DropdownItem>分类3</DropdownItem>                   
-                </DropdownMenu>
-            </Dropdown>
-            <Dropdown style="margin-left: 6px">
-                <Button>
-                    所有状态
-                    <Icon type="ios-arrow-down"></Icon>
-                </Button>
-                <DropdownMenu slot="list">
-                    <DropdownItem>状态1</DropdownItem>
-                    <DropdownItem>状态2</DropdownItem>                    
-                    <DropdownItem>状态3</DropdownItem>                   
-                </DropdownMenu>
-            </Dropdown>
-            <Button style="margin-left: 6px">
+            <Button v-if="!isRecycle" type="error">批量删除</Button>
+            <span v-else>
+                <Button type="primary">批量还原</Button>
+                <Button style="margin-left: 8px;" type="error">永久删除</Button>
+            </span>
+
+            <Select v-model="category"  style="width:120px; margin-left: 20px;">
+                <Option v-for="item in categoryList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+
+            <Select v-model="status"  style="width:120px; margin-left: 15px;">
+                <Option v-for="item in statusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+
+            <Button style="margin-left: 6px" @click="screening">
                 筛选
             </Button>
         </section>
@@ -45,6 +36,7 @@
 export default {
   data() {
     return {
+      isRecycle: false, //是否是回收站
       columns: [
         //表格列定义
         {
@@ -73,8 +65,7 @@ export default {
         },
         {
           title: "操作",
-          // key: 'action',
-          width: 160,
+          width: 180,
           align: "center",
           render: (h, params) => {
             return h("div", [
@@ -82,19 +73,25 @@ export default {
                 "Button",
                 {
                   props: {
-                    type: "warning"
+                    type: this.isRecycle ? 'primary' : "warning"
                   },
                   style: {
                     marginRight: "5px"
                   },
                   on: {
                     click: () => {
-                      console.log("index: ", params.index, "row:", params.row);
-                      //点击编辑后操作
+                      if(this.isRecycle) {
+                        //回收站中点击还原
+                        console.log("还原", "index: ", params.index, "row:", params.row);
+                     
+                      }else {
+                         //文章列表点击编辑后操作
+                         console.log("编辑", "index: ", params.index, "row:", params.row);
+                      }
                     }
                   }
                 },
-                "编辑"
+                this.isRecycle ? '还原' : "编辑"
               ),
               h(
                 "Button",
@@ -104,12 +101,18 @@ export default {
                   },
                   on: {
                     click: () => {
-                      console.log("index: ", params.index, "row:", params.row);
-                      // 点击删除后操作
+                      if(this.isRecycle) {
+                        //回收站中永久删除
+                        console.log("永久删除 index: ", params.index, "row:", params.row);
+                      }else {
+                        //文章列表中逻辑删除
+                        console.log("删除 index: ", params.index, "row:", params.row);
+                      }
+                      
                     }
                   }
                 },
-                "删除"
+                this.isRecycle ? '永久删除' : "删除"
               )
             ]);
           }
@@ -148,8 +151,50 @@ export default {
       ],
       total: 100, //总页数
       pageSize: 8, //页容量
-      pageIndex: 2 //当前页
+      pageIndex: 2, //当前页
+      category: 'life',
+      status: 'publish',
+      categoryList: [
+        {
+          value: 'study',
+          label: '学习'
+        },
+        {
+          value: 'life',
+          label: '生活'
+        },
+        {
+          value: 'work',
+          label: '工作'
+        }
+      ],
+      statusList: [
+        //状态列表
+        {
+          value: 'publish',
+          label: '已发布'
+        },
+        {
+          value: 'waitingAudit',
+          label: '待审核'
+        }
+      ],
     };
+  },
+  created() {
+    if(this.$route.params.type === 'recycle') { //当前页面为回收站
+      this.isRecycle = true
+    }
+  },
+  watch: {
+    $route: function(newVal, oldVal) {
+        console.log('newVal', newVal)
+        if(newVal.params.type === 'recycle') {
+            this.isRecycle = true
+        }else {
+          this.isRecycle = false
+        }
+    }
   },
   methods: {
     selAll(selection) {
@@ -171,6 +216,10 @@ export default {
     sizeChange(size) {
       //页容量改变
       console.log("size: ", size);
+    },
+    screening() { //根据条件筛选数据
+
+
     }
   }
 };
