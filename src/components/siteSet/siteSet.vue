@@ -6,6 +6,11 @@
         <section>
             <Form ref="form" :model="form" :rules="rules" :label-width="120">
                 <!-- 网站图标上传 -->
+                <FormItem label="网站图标" prop="icon" >
+                    <Upload action="//jsonplaceholder.typicode.com/posts/" ref="upload" :max-size="2048" :format="['jpg', 'jpeg', 'png']" :show-upload-list="false" :on-format-error="formatError" :on-exceeded-size="maxSizeError" :on-success="uploadSuccess" :on-error="uploadError" :before-upload="bfUpload">
+                        <img src="../../../statics/images/default.png" style="width: 150px;">
+                    </Upload>
+                </FormItem>
                 <FormItem label="站点名称" prop="name" label-for="name">
                     <Input type="text" v-model="form.name" size="large" element-id="name" placeholder="站点名称"></Input>
                 </FormItem>
@@ -67,6 +72,45 @@ export default {
     handleReset(name) {
       // 重置表单
       this.$refs[name].resetFields();
+    },
+    formatError(file, fileList) {
+        this.$Message.warning('图片格式仅支持jpg、jpeg、png')
+    },
+    maxSizeError(file, fileList) {
+      this.$Message.warning('图片大小不可超过2M')
+    },
+    uploadSuccess(response, file, fileList) {
+      // 获取服务器返回的url并设置给img的src展示
+    },
+    uploadError(error, file, fileList) {
+      // 友好提示
+    },
+    bfUpload(file) {
+      console.log(file)
+      // 1.action中设置正确的服务器接口
+      // 2.限制图片格式，写好处理函数
+      // 3.限制图片大小，写好处理函数
+      // 4.在上传成功的处理函数中，获取服务器返回的url并设置给img的src展示
+      // 5.在上传失败的处理函数中，友好提示
+      // 6.控制只能上传一张
+
+
+      // return this.$refs.upload.fileList.length !== 1 该方式只能上传第一张，不可更改
+
+      this.$refs.upload.clearFiles() //清空已上传的文件，配合单文件上传确保只有一张
+
+      // const type = file.name.split('.')[1]
+      // if(type !== 'jpg' && type !== 'jpeg' && type !== 'png' && type !== 'gif') {
+      //   this.$Message.warning('图片格式仅支持jpg、jpeg、png、gif')
+      //   return false
+      // }
+
+      // if(file.size > 2048) {
+      //   this.$Message.warning('图片大小不可超过2M')
+      //   return false
+      // }
+
+      
     }
   }
 };
