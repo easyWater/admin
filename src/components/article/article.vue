@@ -5,17 +5,19 @@
             <a v-if="!isRecycle" href="javascript: void(0);">写文章</a>
         </section>
         <section class="toolbar">
-            <Button v-if="!isRecycle" type="error">批量删除</Button>
-            <span v-else>
-                <Button type="primary">批量还原</Button>
-                <Button style="margin-left: 8px;" type="error">永久删除</Button>
+            <span v-show="showBatch" style="margin-right: 20px;">
+              <Button v-if="!isRecycle" type="error">批量删除</Button>
+              <span v-else>
+                  <Button type="primary">批量还原</Button>
+                  <Button style="margin-left: 8px;" type="error">永久删除</Button>
+              </span>
             </span>
 
-            <Select v-model="category"  style="width:120px; margin-left: 20px;">
+            <Select v-model="category" style="width:120px;">
                 <Option v-for="item in categoryList" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select>
 
-            <Select v-model="status"  style="width:120px; margin-left: 15px;">
+            <Select v-model="status" style="width:120px; margin-left: 15px;">
                 <Option v-for="item in statusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select>
 
@@ -37,6 +39,7 @@ export default {
   data() {
     return {
       isRecycle: false, //是否是回收站
+      showBatch: false, //是否显示批量操作
       columns: [
         //表格列定义
         {
@@ -182,6 +185,7 @@ export default {
     };
   },
   created() {
+    // 根据页面类型不同调用不同接口获取数据...
     if(this.$route.params.type === 'recycle') { //当前页面为回收站
       this.isRecycle = true
     }
@@ -189,6 +193,7 @@ export default {
   watch: {
     $route: function(newVal, oldVal) {
         console.log('newVal', newVal)
+         // 根据页面类型不同调用不同接口获取数据...
         if(newVal.params.type === 'recycle') {
             this.isRecycle = true
         }else {
@@ -197,17 +202,30 @@ export default {
     }
   },
   methods: {
+    getArtData() {
+      // 获取文章列表数据
+    },
+    getRecData() {
+      // 获取回收站列表数据
+    },
     selAll(selection) {
       //全选按钮选中
       console.log("点击全选时触发: ", selection);
+      this.showBatch = true //显示批量操作
     },
     cancelSelAll(selection) {
       //全选按钮取消选中
       console.log("点击取消全选时触发: ", selection);
+      this.showBatch = false //隐藏批量操作
     },
     selChange(selection) {
       //任意项选中状态改变
       console.log("已选项数据: ", selection);
+      if(selection.length > 1) {
+        this.showBatch = true
+      }else {
+        this.showBatch = false
+      }
     },
     indexChange(index) {
       //当前页改变
@@ -218,7 +236,6 @@ export default {
       console.log("size: ", size);
     },
     screening() { //根据条件筛选数据
-
 
     }
   }

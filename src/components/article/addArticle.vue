@@ -1,7 +1,7 @@
 <template>
     <section class="addArticle">
         <section class="pageTitle">
-            <h2>写文章 </h2>
+            <h2>写文章</h2>
         </section>
         <section class="arMain clearfix">
             <!-- 左侧正文 -->

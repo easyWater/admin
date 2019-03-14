@@ -1,20 +1,26 @@
 <template>
     <common>
         <template v-slot:title>
-            分类目录
+            用户
         </template>
 
         <template v-slot:formTitle>
-            添加新分类目录
+            添加新用户
         </template>
 
         <template v-slot:addForm>
             <Form ref="form" :model="form" :rules="rules" label-position="top">
-                <FormItem label="名称" prop="name" label-for="name">
-                    <Input type="text" v-model="form.name" size="large" element-id="name" placeholder="分类名称"></Input>
+                <FormItem label="邮箱" prop="email" label-for="email">
+                    <Input type="email" v-model="form.email" size="large" element-id="email" placeholder="邮箱"></Input>
                 </FormItem>
                 <FormItem label="别名" prop="slug" label-for="slug">
                     <Input type="text" v-model="form.slug" size="large" element-id="slug" placeholder="slug"></Input>
+                </FormItem>
+                <FormItem label="昵称" prop="nickname" label-for="nickname">
+                    <Input type="text" v-model="form.nickname" size="large" element-id="nickname" placeholder="昵称"></Input>
+                </FormItem>
+                <FormItem label="密码" prop="password" label-for="password">
+                    <Input type="password" v-model="form.password" size="large" element-id="password" placeholder="密码"></Input>
                 </FormItem>                    
                 <FormItem>
                     <Button type="primary" @click="handleSubmit('form')">提交</Button>
@@ -39,28 +45,57 @@ export default {
   data() {
     return {
       form: {
-        //表单数据
-        name: "",
-        slug: ""
+        email: "",
+        slug: "",
+        nickname: "",
+        password: ""
       },
       rules: {
-        //校验规则
-        name: [{ required: true, trigger: "blur", message: "请输入分类名称" }],
-        slug: [{ required: true, trigger: "blur", message: "请输入别名" }]
+        email: [
+          { required: true, trigger: "blur", message: "请输入邮箱" },
+          { type: "email", trigger: "blur", message: "请输入正确的邮箱格式" }
+        ],
+        slug: [{ required: true, trigger: "blur", message: "请输入别名" }],
+        nickname: [{ required: true, trigger: "blur", message: "请输入昵称" }],
+        password: [{ required: true, trigger: "blur", message: "请输入密码" }]
       },
-      loading: false, //表格显示加载状态
+      loading: false, //表格加载数据状态
       columns: [
         {
           type: "selection",
           width: 50
         },
         {
-          title: "名称",
-          key: "name"
+          title: "头像",
+          key: "headImg",
+          align: "center",
+          render: (h, params) => {
+            return h("img", {
+              attrs: {
+                src: params.row.headImg
+              },
+              style: {
+                width: "80px",
+                margin: "5px auto"
+              }
+            });
+          }
         },
         {
-          title: "slug",
+          title: "邮箱",
+          key: "email"
+        },
+        {
+          title: "别名",
           key: "slug"
+        },
+        {
+          title: "昵称",
+          key: "nickname"
+        },
+        {
+          title: "状态",
+          key: "status"
         },
         {
           title: "操作",
@@ -105,19 +140,31 @@ export default {
       ],
       data: [
         {
-          name: "生活",
-          slug: "life"
+          headImg:
+            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552559353782&di=58f8ec135f8d6aa2248fe8ba275cddcd&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201803%2F26%2F20180326120657_cuhhd.png",
+          email: "1234567890@qq.com",
+          slug: "虎太郎1",
+          nickname: "小宝宝",
+          status: "启用"
         },
         {
-          name: "工作",
-          slug: "work"
+          headImg:
+            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552559409425&di=2e1c4df2916ea41296c8208a8d04386a&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201805%2F05%2F20180505122857_dfftg.thumb.700_0.jpg",
+          email: "1234567890@qq.com",
+          slug: "虎太郎2",
+          nickname: "小宝宝",
+          status: "禁用"
         },
         {
-          name: "学习",
-          slug: "study"
+          headImg:
+            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552559440307&di=ebd3417add75f16edb402a75dc164cd2&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201807%2F14%2F20180714142138_CYFTh.thumb.700_0.jpeg",
+          email: "1234567890@qq.com",
+          slug: "虎太郎3",
+          nickname: "小宝宝",
+          status: "启用"
         }
       ],
-      showBatch: false //是否显示批量操作
+      showBatch: false
     };
   },
   methods: {
@@ -125,14 +172,14 @@ export default {
       //表单提交
       this.$refs[name].validate(valid => {
         if (valid) {
-          console.log("验证成功，提交数据....");
+          console.log("验证通过，提交数据...");
         } else {
           console.log("验证失败");
         }
       });
     },
     handleReset(name) {
-      //重置表单
+      // 重置表单
       this.$refs[name].resetFields();
     },
     selAll(selection) {

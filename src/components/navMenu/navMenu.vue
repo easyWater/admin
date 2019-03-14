@@ -1,21 +1,24 @@
 <template>
     <common>
         <template v-slot:title>
-            分类目录
+            导航菜单
         </template>
 
         <template v-slot:formTitle>
-            添加新分类目录
+            添加新导航链接
         </template>
 
         <template v-slot:addForm>
             <Form ref="form" :model="form" :rules="rules" label-position="top">
-                <FormItem label="名称" prop="name" label-for="name">
-                    <Input type="text" v-model="form.name" size="large" element-id="name" placeholder="分类名称"></Input>
+                <FormItem label="文本" prop="txt" label-for="txt">
+                    <Input type="text" v-model="form.txt" size="large" element-id="txt" placeholder="文本"></Input>
                 </FormItem>
-                <FormItem label="别名" prop="slug" label-for="slug">
-                    <Input type="text" v-model="form.slug" size="large" element-id="slug" placeholder="slug"></Input>
-                </FormItem>                    
+                <FormItem label="标题" prop="title" label-for="title">
+                    <Input type="text" v-model="form.title" size="large" element-id="title" placeholder="标题"></Input>
+                </FormItem>
+                <FormItem label="链接" prop="link" label-for="link">
+                    <Input type="text" v-model="form.link" size="large" element-id="link" placeholder="链接"></Input>
+                </FormItem>                                 
                 <FormItem>
                     <Button type="primary" @click="handleSubmit('form')">提交</Button>
                     <Button @click="handleReset('form')" style="margin-left: 8px">重置</Button>
@@ -27,6 +30,7 @@
             <Button v-show="showBatch" type="error" style="margin-bottom: 10px">批量删除</Button>
             <Table border :columns="columns" :data="data" :loading="loading" @on-select-all="selAll" @on-select-all-cancel="cancelSelAll" @on-selection-change="selChange"></Table>
         </template>
+
     </common>
 </template>
 
@@ -39,29 +43,40 @@ export default {
   data() {
     return {
       form: {
-        //表单数据
-        name: "",
-        slug: ""
+          txt: '',
+          title: '',
+          link: ''
       },
       rules: {
-        //校验规则
-        name: [{ required: true, trigger: "blur", message: "请输入分类名称" }],
-        slug: [{ required: true, trigger: "blur", message: "请输入别名" }]
+          txt: [
+              {required: true, trigger: 'blur', message: '请输入文本'}
+          ],
+          title: [
+              {required: true, trigger: 'blur', message: '请输入标题'}
+          ],
+          link: [
+              {required: true, trigger: 'blur', message: '请输入链接'}
+          ]
       },
-      loading: false, //表格显示加载状态
+      showBatch: false, //是否显示批量操作
+      loading: false, //表格是否显示加载中
       columns: [
         {
           type: "selection",
           width: 50
         },
         {
-          title: "名称",
-          key: "name"
+          title: "文本",
+          key: "txt"
         },
         {
-          title: "slug",
-          key: "slug"
+          title: "标题",
+          key: "title"
         },
+        {
+          title: "链接",
+          key: "link"
+        },        
         {
           title: "操作",
           align: "center",
@@ -105,19 +120,21 @@ export default {
       ],
       data: [
         {
-          name: "生活",
-          slug: "life"
+          txt: '奇趣事',
+          title: '奇趣事',
+          link: '#'
         },
         {
-          name: "工作",
-          slug: "work"
+          txt: '潮科技',
+          title: '潮科技',
+          link: '#'
         },
         {
-          name: "学习",
-          slug: "study"
+          txt: '会生活',
+          title: '会生活',
+          link: '#'
         }
       ],
-      showBatch: false //是否显示批量操作
     };
   },
   methods: {
@@ -125,14 +142,14 @@ export default {
       //表单提交
       this.$refs[name].validate(valid => {
         if (valid) {
-          console.log("验证成功，提交数据....");
+          console.log("验证通过，提交数据...");
         } else {
           console.log("验证失败");
         }
       });
     },
     handleReset(name) {
-      //重置表单
+      // 重置表单
       this.$refs[name].resetFields();
     },
     selAll(selection) {

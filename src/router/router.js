@@ -8,8 +8,11 @@ const router = new VueRouter({
         {path: '/dashboard', component: () => import('../components/dashboard/dashboard.vue')},
         {path: '/article/:type', component: () => import('../components/article/article.vue')},
         {path: '/addArticle', component: () => import('../components/article/addArticle.vue')},
-        {path: '/recycle', component: () => import('../components/article/recycle.vue')},
-        {path: '/catalog', component: () => import('../components/catalog/catalog.vue')}
+        {path: '/catalog', component: () => import('../components/catalog/catalog.vue')},
+        {path: '/comments', component: () => import('../components/comments/comments.vue')},
+        {path: '/user', component: () => import('../components/user/user.vue')},
+        {path: '/navMenu', component: () => import('../components/navMenu/navMenu.vue')},
+        {path: '/siteSet', component: () => import('../components/siteSet/siteSet.vue')}
     ]
 })
 

@@ -24,16 +24,16 @@
                 </ul>
               </li>
               <li>
-                <a href="javascript: void(0);" class="a-menu"><i class="iconfont icon-pinglun lf"></i>评论</a>
+                <router-link to="/comments" class="a-menu"><i class="iconfont icon-pinglun lf"></i>评论</router-link>
               </li>
               <li>
-                <a href="javascript: void(0);" class="a-menu"><i class="iconfont icon-yonghu1 lf"></i>用户</a>
+                <router-link to="/user" class="a-menu"><i class="iconfont icon-yonghu1 lf"></i>用户</router-link>                
               </li>
               <li>
                 <a href="javascript: void(0);" class="a-menu"><i class="iconfont icon-shezhi lf"></i>设置<i class="iconfont icon-you rg"></i></a>
                 <ul>
-                  <li><a href="javascript: void(0);">网站设置</a></li>
-                  <li><a href="javascript: void(0);">导航菜单</a></li>
+                  <li><router-link to="/navMenu">导航菜单</router-link></li>
+                  <li><router-link to="/siteSet">网站设置</router-link></li>                  
                 </ul>
               </li>
             </ul>
