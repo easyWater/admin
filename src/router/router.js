@@ -7,7 +7,9 @@ const router = new VueRouter({
         {path: '/', redirect: '/dashboard'},
         {path: '/dashboard', component: () => import('../components/dashboard/dashboard.vue')},
         {path: '/article', component: () => import('../components/article/article.vue')},
-        {path: '/addArticle', component: () => import('../components/article/addArticle.vue')}
+        {path: '/addArticle', component: () => import('../components/article/addArticle.vue')},
+        {path: '/recycle', component: () => import('../components/article/recycle.vue')},
+        {path: '/catalog', component: () => import('../components/catalog/catalog.vue')}
     ]
 })
 

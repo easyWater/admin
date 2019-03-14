@@ -19,8 +19,8 @@
                 <ul>
                   <li><router-link to="/article">所有文章</router-link></li>
                   <li><router-link to="/addArticle">写文章</router-link></li>
-                  <li><a href="javascript: void(0);">分类目录</a></li>
-                  <li><a href="javascript: void(0);">标签</a></li>
+                  <li><router-link to="/catalog">分类目录</router-link></li>
+                  <li><router-link to="/recycle">回收站</router-link></li>
                 </ul>
               </li>
               <li>

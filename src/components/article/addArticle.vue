@@ -107,7 +107,7 @@ export default {
     this.createEditor()
   },
   methods: {
-    setCurrentTime() {
+    setCurrentTime() { //设置当前时间
       const date = new Date()
       const y = date.getFullYear()
       const month =
@@ -127,9 +127,22 @@ export default {
       this.editor.create() //创建编辑器实例
     },
     submitArt() {
-      //1.获取编辑器中内容设置给表单对象
-      // this.$set(this.article, 'content', this.editor.txt.html())
-      this.article.content = this.editor.txt.html() //获取html格式的内容
+      // 判断标题以及正文是否存在
+      if(!this.article.title) {
+        this.$Message.warning('请输入文章标题')
+        return
+      }
+
+      if(!this.editor.txt.text()) { //判断编辑器内是否有纯文本
+        this.$Message.warning('写点什么吧...')
+        return
+      }
+
+      this.article.content = this.editor.txt.html() //获取编辑器中内容html格式设置给表单对象
+
+      // 提交数据...
+      console.log('提交数据...', this.editor.txt.html(), this.editor.txt.text())
+
     },
     dateChange(formatDate) {
       // 选择发布日期
