@@ -9,6 +9,9 @@ window.jQuery = jquery
 
 import router from './router/router'
 
+import axios from './tools/http'
+Vue.prototype.$http = axios
+
 import iView from 'iview';
 import 'iview/dist/styles/iview.css';
 Vue.use(iView);

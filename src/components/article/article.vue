@@ -2,11 +2,12 @@
     <section class="article">
         <section class="pageTitle">
             <h2 v-cloak>{{isRecycle ? '回收站' : '所有文章'}}</h2>
-            <a v-if="!isRecycle" href="javascript: void(0);">写文章</a>
+            <!-- <a v-if="!isRecycle" href="javascript: void(0);">写文章</a> -->
+            <router-link v-if="!isRecycle" to="/addArticle">写文章</router-link>
         </section>
         <section class="toolbar">
             <span v-show="showBatch" style="margin-right: 20px;">
-              <Button v-if="!isRecycle" type="error">批量删除</Button>
+              <Button v-if="!isRecycle" type="error" @click="delArticle">批量删除</Button>
               <span v-else>
                   <Button type="primary">批量还原</Button>
                   <Button style="margin-left: 8px;" type="error">永久删除</Button>
@@ -14,7 +15,7 @@
             </span>
 
             <Select v-model="category" style="width:120px;">
-                <Option v-for="item in categoryList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                <Option v-for="item in categoryList" :value="item.id" :key="item.id">{{ item.name }}</Option>
             </Select>
 
             <Select v-model="status" style="width:120px; margin-left: 15px;">
@@ -52,19 +53,28 @@ export default {
         },
         {
           title: "作者",
-          key: "author"
+          key: "userName",
+          width: 100
         },
         {
           title: "分类",
-          key: "category"
+          key: "categoryName",
+          width: 100
         },
         {
           title: "发表时间",
-          key: "publishTime"
+          key: "createTime",
+          render: (h, params) => {
+            return h('span', this.formatDate(params.row.createTime))
+          }
         },
         {
           title: "状态",
-          key: "status"
+          key: "isFinished",
+          width: 100,
+          render: (h, params) => {
+            return h("span", params.row.isFinished === 1 ? '已发布' : '未发布')
+          }
         },
         {
           title: "操作",
@@ -110,6 +120,9 @@ export default {
                       }else {
                         //文章列表中逻辑删除
                         console.log("删除 index: ", params.index, "row:", params.row);
+                        this.ids = []
+                        this.ids.push(params.row.id)
+                        this.delArticle()
                       }
                       
                     }
@@ -122,70 +135,36 @@ export default {
         }
       ],
       data: [
-        //表格数据
-        {
-          title: "标题1",
-          author: "张三",
-          category: "生活",
-          publishTime: "2019-03-13",
-          status: "待审核"
-        },
-        {
-          title: "标题2",
-          author: "张三",
-          category: "生活",
-          publishTime: "2019-03-13",
-          status: "待审核"
-        },
-        {
-          title: "标题3",
-          author: "张三",
-          category: "生活",
-          publishTime: "2019-03-13",
-          status: "待审核"
-        },
-        {
-          title: "标题4",
-          author: "张三",
-          category: "生活",
-          publishTime: "2019-03-13",
-          status: "待审核"
-        }
+        //表格数据        
       ],
-      total: 100, //总页数
-      pageSize: 8, //页容量
-      pageIndex: 2, //当前页
-      category: 'life',
-      status: 'publish',
+      total: 0, //总页数
+      pageSize: 10, //页容量
+      pageIndex: 1, //当前页
+      category: '', //所属分类
+      status: '', //状态
       categoryList: [
-        {
-          value: 'study',
-          label: '学习'
-        },
-        {
-          value: 'life',
-          label: '生活'
-        },
-        {
-          value: 'work',
-          label: '工作'
-        }
+        // 分类
       ],
       statusList: [
         //状态列表
         {
-          value: 'publish',
+          value: 1,
           label: '已发布'
         },
         {
-          value: 'waitingAudit',
-          label: '待审核'
+          value: 0,
+          label: '未发布'
         }
       ],
+      ids: [
+        // 批量删除的id集合
+      ]
     };
   },
   created() {
     // 根据页面类型不同调用不同接口获取数据...
+    this.getArtData()
+    this.getCategoryList()
     if(this.$route.params.type === 'recycle') { //当前页面为回收站
       this.isRecycle = true
     }
@@ -202,8 +181,27 @@ export default {
     }
   },
   methods: {
-    getArtData() {
+    getCategoryList () { //获取分类列表
+      const data = {
+        page: 1,
+        size: -1
+      }
+      this.$http({url: '/category/list', type: 'POST', data}).then(res => {
+        this.categoryList = res.data.records
+      })
+    },
+    getArtData(categoryId, isFinished) {
       // 获取文章列表数据
+      let params = {
+        categoryId,
+        isFinished,
+        size: this.pageSize,
+        page: this.pageIndex
+      }
+      this.$http({url: `/article/list`, type: 'post', params}).then(res => {
+        this.data = res.data.records
+        this.total = res.data.total
+      })
     },
     getRecData() {
       // 获取回收站列表数据
@@ -221,6 +219,11 @@ export default {
     selChange(selection) {
       //任意项选中状态改变
       console.log("已选项数据: ", selection);
+      this.ids = []
+      selection.forEach(item => {
+        this.ids.push(item.id)
+      })
+      
       if(selection.length > 1) {
         this.showBatch = true
       }else {
@@ -236,7 +239,23 @@ export default {
       console.log("size: ", size);
     },
     screening() { //根据条件筛选数据
-
+      this.getArtData(this.category, this.status)
+    },
+    delArticle() { //删除文章
+      const data = {
+        ids: this.ids.join(',')
+      }
+      this.$http({url: '/article/delete', type: 'POST', data}).then(res => {
+        this.$Message.success(res.message)
+        this.getArtData()
+      })
+    },
+    formatDate(time) {
+      let date = new Date(time)
+      let y = date.getFullYear()
+      let m = date.getMonth() + 1
+      let d = date.getDate()
+      return y + '-' + m + '-' +d
     }
   }
 };

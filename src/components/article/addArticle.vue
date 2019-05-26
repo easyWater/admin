@@ -13,25 +13,25 @@
             </section>
             <!-- 右侧属性 -->
             <section class="attr">
-                <section class="item">
+                <!-- <section class="item">
                     <p>别名</p>
                     <Input v-model="article.slug" placeholder="slug" clearable size="large" />
                     <span>https://zce.me/post/<b>{{article.slug}}</b></span>
-                </section>
-                <section class="item">
+                </section> -->
+                <!-- <section class="item">
                     <p>特色图像</p>
                     <Upload action="//jsonplaceholder.typicode.com/posts/" name="featuresImg" :format="['jpg', 'jpeg', 'png', 'gif']" :on-format-error="formatErr" :before-upload="befUpload" :on-exceeded-size="exceededSize" :max-size="2048" :show-upload-list="false">
                         <Button icon="ios-cloud-upload-outline">选择图片</Button>
                     </Upload> 
                     <span v-if="featuresImg.name">文件名：<b>{{featuresImg.name}}</b></span>                   
-                </section>
+                </section> -->
                 <section class="item">
                     <p>所属分类</p>
                     <Select v-model="article.category">
                         <Option v-for="item in categoryList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                     </Select>                
                 </section>
-                <section class="item clearfix">
+                <!-- <section class="item clearfix">
                     <p>发布时间</p>
                     <Col span="12">
                         <DatePicker type="date" :value="article.date" @on-change="dateChange" show-week-numbers placeholder="Select date" style="width: 80%"></DatePicker>
@@ -39,9 +39,9 @@
                     <Col span="12">
                         <TimePicker format="HH:mm" :value="article.time" placeholder="Select time" @on-change="timeChange" style="width: 80%"></TimePicker>
                     </Col>               
-                </section>
+                </section> -->
                 <section class="item">
-                    <p>状态</p>
+                    <p>是否立即发布</p>
                     <Select v-model="article.status">
                         <Option v-for="item in statusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                     </Select>                
@@ -63,12 +63,12 @@ export default {
       article: {
         //文章对象
         title: '',
-        slug: 'slug',
+        // slug: 'slug',
         category: '',
         status: '',
         content: '',
-        date: '',
-        time: ''
+        // date: '',
+        // time: ''
       },
       categoryList: [
         //分类列表
@@ -88,39 +88,39 @@ export default {
       statusList: [
         //状态列表
         {
-          value: 'publish',
-          label: '已发布'
+          value: 1,
+          label: '是'
         },
         {
-          value: 'waitingAudit',
-          label: '待审核'
+          value: 0,
+          label: '否'
         }
       ],
-      featuresImg: {} //特色图片
+      // featuresImg: {} //特色图片
     }
   },
   created() {
     // 给发布日期以及时间设置初始值
-    this.setCurrentTime()
+    // this.setCurrentTime()
   },
   mounted() {
     this.createEditor()
   },
   methods: {
-    setCurrentTime() { //设置当前时间
-      const date = new Date()
-      const y = date.getFullYear()
-      const month =
-        date.getMonth() + 1 >= 10
-          ? date.getMonth() + 1
-          : '0' + (date.getMonth() + 1)
-      const d = date.getDate() >= 10 ? date.getDate() : '0' + date.getDate()
-      const h = date.getHours() >= 10 ? date.getHours() : '0' + date.getHours()
-      const minu =
-        date.getMinutes() >= 10 ? date.getMinutes() : '0' + date.getMinutes()
-      this.article.date = y + '-' + month + '-' + d
-      this.article.time = h + ':' + minu
-    },
+    // setCurrentTime() { //设置当前时间
+    //   const date = new Date()
+    //   const y = date.getFullYear()
+    //   const month =
+    //     date.getMonth() + 1 >= 10
+    //       ? date.getMonth() + 1
+    //       : '0' + (date.getMonth() + 1)
+    //   const d = date.getDate() >= 10 ? date.getDate() : '0' + date.getDate()
+    //   const h = date.getHours() >= 10 ? date.getHours() : '0' + date.getHours()
+    //   const minu =
+    //     date.getMinutes() >= 10 ? date.getMinutes() : '0' + date.getMinutes()
+    //   this.article.date = y + '-' + month + '-' + d
+    //   this.article.time = h + ':' + minu
+    // },
     createEditor() {
       //创建富文本编辑器
       this.editor = new WangEditor('#editor')
@@ -129,20 +129,38 @@ export default {
     submitArt() {
       // 判断标题以及正文是否存在
       if(!this.article.title) {
-        this.$Message.warning('请输入文章标题')
+        this.$Message.warning('文章标题咧！')
         return
       }
 
-      if(!this.editor.txt.text()) { //判断编辑器内是否有纯文本
+      if(!this.editor.txt.text()) { //判断编辑器内是否有纯文本(排除默认p标签)
         this.$Message.warning('写点什么吧...')
+        return
+      }
+
+      if(!this.article.category) { //判断是否选择所属分类
+        this.$Message.warning('分类是必填哦...')
+        return
+      }
+
+      if(!this.article.status) { //判断是否立即发布
+        this.$Message.warning('要不要立即发布捏？')
         return
       }
 
       this.article.content = this.editor.txt.html() //获取编辑器中内容html格式设置给表单对象
 
-      // 提交数据...
-      console.log('提交数据...', this.editor.txt.html(), this.editor.txt.text())
+      const data = {
+        categoryId: this.article.category,
+        content: this.article.content,
+        isFinished: this.article.status,
+        title: this.article.title
+      }
 
+      this.$http({url: '/article/save', type: 'POST', data}).then(res => {
+        this.$Message.success(res.message)
+        this.$router.push('/article/list')
+      })
     },
     dateChange(formatDate) {
       // 选择发布日期
