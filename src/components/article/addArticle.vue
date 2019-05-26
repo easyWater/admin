@@ -41,6 +41,12 @@
                     </Col>               
                 </section> -->
                 <section class="item">
+                    <p>所属栏目</p>
+                    <Select v-model="article.type">
+                        <Option v-for="item in typeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    </Select>                
+                </section>
+                <section class="item">
                     <p>是否立即发布</p>
                     <Select v-model="article.status">
                         <Option v-for="item in statusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
@@ -63,12 +69,10 @@ export default {
       article: {
         //文章对象
         title: '',
-        // slug: 'slug',
         category: '',
         status: '',
         content: '',
-        // date: '',
-        // time: ''
+        type: ''
       },
       categoryList: [
         //分类列表
@@ -96,6 +100,20 @@ export default {
           label: '否'
         }
       ],
+      typeList: [
+        {
+          value: 0,
+          label: '前端'
+        },
+        {
+          value: 1,
+          label: '后端'
+        },
+        {
+          value: 2,
+          label: '生活'
+        }
+      ]
       // featuresImg: {} //特色图片
     }
   },
