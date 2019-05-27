@@ -14,12 +14,16 @@
               </span>
             </span>
 
-            <Select v-model="category" style="width:120px;">
+            <Select v-model="category" style="width:120px;" placeholder="请选择分类" clearable>
                 <Option v-for="item in categoryList" :value="item.id" :key="item.id">{{ item.name }}</Option>
             </Select>
 
-            <Select v-model="status" style="width:120px; margin-left: 15px;">
+            <Select v-model="status" style="width:120px; margin-left: 15px;" placeholder="请选择状态" clearable>
                 <Option v-for="item in statusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+
+            <Select v-model="type" style="width:120px; margin-left: 15px;" placeholder="请选择栏目" clearable>
+                <Option v-for="item in typeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select>
 
             <Button style="margin-left: 6px" @click="screening">
@@ -55,6 +59,14 @@ export default {
           title: "作者",
           key: "userName",
           width: 100
+        },
+        {
+          title: "栏目",
+          key: "type",
+          width: 100,
+          render: (h, params) => {
+            return h("span", params.row.type === 0 ? '前端' : params.row.type === 1 ? '后端' : '生活')
+          }
         },
         {
           title: "分类",
@@ -100,6 +112,7 @@ export default {
                       }else {
                          //文章列表点击编辑后操作
                          console.log("编辑", "index: ", params.index, "row:", params.row);
+                         this.$router.push(`/addArticle?articleId=${params.row.id}`)
                       }
                     }
                   }
@@ -138,10 +151,11 @@ export default {
         //表格数据        
       ],
       total: 0, //总页数
-      pageSize: 10, //页容量
+      pageSize: 8, //页容量
       pageIndex: 1, //当前页
       category: '', //所属分类
       status: '', //状态
+      type: '', //文章所属栏目
       categoryList: [
         // 分类
       ],
@@ -154,6 +168,20 @@ export default {
         {
           value: 0,
           label: '未发布'
+        }
+      ],
+      typeList: [
+        {
+          value: 0,
+          label: '前端'
+        },
+        {
+          value: 1,
+          label: '后端'
+        },
+        {
+          value: 2,
+          label: '生活'
         }
       ],
       ids: [
@@ -190,11 +218,12 @@ export default {
         this.categoryList = res.data.records
       })
     },
-    getArtData(categoryId, isFinished) {
+    getArtData(categoryId, isFinished, type) {
       // 获取文章列表数据
       let params = {
         categoryId,
         isFinished,
+        type,
         size: this.pageSize,
         page: this.pageIndex
       }
@@ -232,14 +261,17 @@ export default {
     },
     indexChange(index) {
       //当前页改变
-      console.log("index: ", index);
+      this.pageIndex = index
+      this.getArtData(this.category, this.status, this.type)
     },
     sizeChange(size) {
       //页容量改变
-      console.log("size: ", size);
+      this.pageSize = size
+      this.pageIndex = 1
+      this.getArtData(this.category, this.status, this.type)
     },
     screening() { //根据条件筛选数据
-      this.getArtData(this.category, this.status)
+      this.getArtData(this.category, this.status, this.type)
     },
     delArticle() { //删除文章
       const data = {
@@ -247,7 +279,7 @@ export default {
       }
       this.$http({url: '/article/delete', type: 'POST', data}).then(res => {
         this.$Message.success(res.message)
-        this.getArtData()
+        this.getArtData(this.category, this.status, this.type)
       })
     },
     formatDate(time) {
@@ -264,27 +296,6 @@ export default {
 <style lang="scss" type="text/css" scoped>
 .article {
   padding: 0px 15px;
-  // .pageTitle {
-  //   margin-bottom: 20px;
-  //   h2 {
-  //     color: #333333;
-  //     font-size: 24px;
-  //     display: inline-block;
-  //     vertical-align: middle;
-  //   }
-  //   a {
-  //     color: #fff;
-  //     background-color: #40586d;
-  //     border: 1px solid #374b5d;
-  //     font-size: 12px;
-  //     margin-left: 10px;
-  //     padding: 0px 5px;
-  //     line-height: 20px;
-  //     border-radius: 3px;
-  //     display: inline-block;
-  //     vertical-align: middle;
-  //   }
-  // }
   .toolbar {
     margin-bottom: 10px;
   }

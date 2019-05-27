@@ -26,9 +26,15 @@
                     <span v-if="featuresImg.name">文件名：<b>{{featuresImg.name}}</b></span>                   
                 </section> -->
                 <section class="item">
+                    <p>所属栏目</p>
+                    <Select v-model="article.type">
+                        <Option v-for="item in typeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    </Select>                
+                </section>
+                <section class="item">
                     <p>所属分类</p>
                     <Select v-model="article.category">
-                        <Option v-for="item in categoryList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                        <Option v-for="item in categoryList" :value="item.id" :key="item.id">{{ item.name }}</Option>
                     </Select>                
                 </section>
                 <!-- <section class="item clearfix">
@@ -39,13 +45,7 @@
                     <Col span="12">
                         <TimePicker format="HH:mm" :value="article.time" placeholder="Select time" @on-change="timeChange" style="width: 80%"></TimePicker>
                     </Col>               
-                </section> -->
-                <section class="item">
-                    <p>所属栏目</p>
-                    <Select v-model="article.type">
-                        <Option v-for="item in typeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                    </Select>                
-                </section>
+                </section> -->                
                 <section class="item">
                     <p>是否立即发布</p>
                     <Select v-model="article.status">
@@ -76,18 +76,6 @@ export default {
       },
       categoryList: [
         //分类列表
-        {
-          value: 'study',
-          label: '学习'
-        },
-        {
-          value: 'life',
-          label: '生活'
-        },
-        {
-          value: 'work',
-          label: '工作'
-        }
       ],
       statusList: [
         //状态列表
@@ -100,7 +88,7 @@ export default {
           label: '否'
         }
       ],
-      typeList: [
+      typeList: [ //栏目
         {
           value: 0,
           label: '前端'
@@ -113,13 +101,19 @@ export default {
           value: 2,
           label: '生活'
         }
-      ]
+      ],
+      id: '' //编辑页面有值
       // featuresImg: {} //特色图片
     }
   },
   created() {
     // 给发布日期以及时间设置初始值
     // this.setCurrentTime()
+    this.getCategoryList() //获取分类数据
+    if(this.$route.query.articleId) {
+      this.id = this.$route.query.articleId
+      this.getArtData()
+    }
   },
   mounted() {
     this.createEditor()
@@ -139,6 +133,15 @@ export default {
     //   this.article.date = y + '-' + month + '-' + d
     //   this.article.time = h + ':' + minu
     // },
+    getCategoryList () { //获取分类列表
+      const data = {
+        page: 1,
+        size: -1
+      }
+      this.$http({url: '/category/list', type: 'POST', data}).then(res => {
+        this.categoryList = res.data.records
+      })
+    },
     createEditor() {
       //创建富文本编辑器
       this.editor = new WangEditor('#editor')
@@ -156,23 +159,33 @@ export default {
         return
       }
 
+      if(!this.article.type && this.article.type !== 0) { //判断是否选择所属栏目
+        this.$Message.warning('栏目是必填哦...')
+        return
+      }
+
       if(!this.article.category) { //判断是否选择所属分类
         this.$Message.warning('分类是必填哦...')
         return
       }
 
-      if(!this.article.status) { //判断是否立即发布
+      if(!this.article.status && this.article.status !== 0) { //判断是否立即发布
         this.$Message.warning('要不要立即发布捏？')
         return
       }
 
       this.article.content = this.editor.txt.html() //获取编辑器中内容html格式设置给表单对象
 
-      const data = {
+      let data = {
         categoryId: this.article.category,
         content: this.article.content,
         isFinished: this.article.status,
-        title: this.article.title
+        title: this.article.title,
+        type: this.article.type
+      }
+
+      if(this.id) {
+        data.id = this.id
       }
 
       this.$http({url: '/article/save', type: 'POST', data}).then(res => {
@@ -180,45 +193,55 @@ export default {
         this.$router.push('/article/list')
       })
     },
-    dateChange(formatDate) {
-      // 选择发布日期
-      this.article.date = formatDate
-    },
-    timeChange(formatTime) {
-      //选择发布时间
-      this.article.time = formatTime
-    },
-    formatErr(file, fileList) {
-      //文件上传格式验证失败
-      console.log('file', file, 'fileList', fileList)
-      this.$Message.warning('图片格式仅支持jpg、jpeg、png、gif')
-    },
-    befUpload(file) {
-      // console.log('file', file)
-      //文件上传前调用
-      // this.featuresImg = file
-      // return false
-      //判断格式
-      const type = file.name.split('.')[1]
-      if(type !== 'jpg' && type !== 'jpeg' && type !== 'png' && type !== 'gif') {
-        this.$Message.warning('图片格式仅支持jpg、jpeg、png、gif')
-        return false
-      }
-
-      // 判断大小
-      if(file.size > 2048) {
-        this.$Message.warning('特色图片大小不能超过2M')
-        return false
-      }
-
-      this.featuresImg = file
-      return false
-
-    },
-    exceededSize(file, fileList) {
-      //上传文件超出指定大小
-      this.$Message.warning('特色图片大小不能超过2M')
+    getArtData() { //获取文章信息
+      this.$http({url: '/article/detail', type: 'post', data: {id: this.id}}).then(res => {
+        this.article.title = res.data.title
+        this.article.content = res.data.content
+        this.article.status = res.data.isFinished
+        this.article.type = res.data.type
+        this.article.category = res.data.categoryId
+        this.editor.txt.html(res.data.content)
+      })
     }
+    // dateChange(formatDate) {
+    //   // 选择发布日期
+    //   this.article.date = formatDate
+    // },
+    // timeChange(formatTime) {
+    //   //选择发布时间
+    //   this.article.time = formatTime
+    // },
+    // formatErr(file, fileList) {
+    //   //文件上传格式验证失败
+    //   console.log('file', file, 'fileList', fileList)
+    //   this.$Message.warning('图片格式仅支持jpg、jpeg、png、gif')
+    // },
+    // befUpload(file) {
+    //   // console.log('file', file)
+    //   //文件上传前调用
+    //   // this.featuresImg = file
+    //   // return false
+    //   //判断格式
+    //   const type = file.name.split('.')[1]
+    //   if(type !== 'jpg' && type !== 'jpeg' && type !== 'png' && type !== 'gif') {
+    //     this.$Message.warning('图片格式仅支持jpg、jpeg、png、gif')
+    //     return false
+    //   }
+
+    //   // 判断大小
+    //   if(file.size > 2048) {
+    //     this.$Message.warning('特色图片大小不能超过2M')
+    //     return false
+    //   }
+
+    //   this.featuresImg = file
+    //   return false
+
+    // },
+    // exceededSize(file, fileList) {
+    //   //上传文件超出指定大小
+    //   this.$Message.warning('特色图片大小不能超过2M')
+    // }
   }
 }
 </script>
