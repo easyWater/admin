@@ -9,8 +9,8 @@
             <span v-show="showBatch" style="margin-right: 20px;">
               <Button v-if="!isRecycle" type="error" @click="delArticle">批量删除</Button>
               <span v-else>
-                  <Button type="primary">批量还原</Button>
-                  <Button style="margin-left: 8px;" type="error">永久删除</Button>
+                  <Button type="primary" @click="revert">批量还原</Button>
+                  <Button style="margin-left: 8px;" type="error" @click="delArticle">永久删除</Button>
               </span>
             </span>
 
@@ -32,7 +32,7 @@
         </section>
         <section class="list">
             <!-- 表格 -->
-            <Table border :columns="columns" :data="data" @on-select-all="selAll" @on-select-all-cancel="cancelSelAll" @on-selection-change="selChange"></Table>
+            <Table border :columns="columns" :data="data" @on-selection-change="selChange"></Table>
             <!-- 分页器 -->
             <Page :total="total" :current="pageIndex" :page-size="pageSize" show-elevator show-sizer show-total :page-size-opts="[8, 15, 20, 25]" @on-change="indexChange" @on-page-size-change="sizeChange" />
         </section>
@@ -107,11 +107,11 @@ export default {
                     click: () => {
                       if(this.isRecycle) {
                         //回收站中点击还原
-                        console.log("还原", "index: ", params.index, "row:", params.row);
-                     
+                        this.ids = []
+                        this.ids.push(params.row.id)
+                        this.revert()
                       }else {
                          //文章列表点击编辑后操作
-                         console.log("编辑", "index: ", params.index, "row:", params.row);
                          this.$router.push(`/addArticle?articleId=${params.row.id}`)
                       }
                     }
@@ -127,17 +127,9 @@ export default {
                   },
                   on: {
                     click: () => {
-                      if(this.isRecycle) {
-                        //回收站中永久删除
-                        console.log("永久删除 index: ", params.index, "row:", params.row);
-                      }else {
-                        //文章列表中逻辑删除
-                        console.log("删除 index: ", params.index, "row:", params.row);
-                        this.ids = []
-                        this.ids.push(params.row.id)
-                        this.delArticle()
-                      }
-                      
+                      this.ids = []
+                      this.ids.push(params.row.id)
+                      this.delArticle()                                            
                     }
                   }
                 },
@@ -190,22 +182,27 @@ export default {
     };
   },
   created() {
-    // 根据页面类型不同调用不同接口获取数据...
-    this.getArtData()
-    this.getCategoryList()
+    // 根据页面类型不同调用不同接口获取数据...    
     if(this.$route.params.type === 'recycle') { //当前页面为回收站
       this.isRecycle = true
     }
+    this.getArtData()
+    this.getCategoryList()
   },
   watch: {
     $route: function(newVal, oldVal) {
-        console.log('newVal', newVal)
          // 根据页面类型不同调用不同接口获取数据...
         if(newVal.params.type === 'recycle') {
             this.isRecycle = true
         }else {
           this.isRecycle = false
-        }
+        }        
+        this.category = ''
+        this.status = ''
+        this.type = ''
+        this.pageSize = 8 //页容量
+        this.pageIndex = 1 //当前页
+        this.getArtData()
     }
   },
   methods: {
@@ -225,34 +222,20 @@ export default {
         isFinished,
         type,
         size: this.pageSize,
-        page: this.pageIndex
+        page: this.pageIndex,
+        isDelete: this.isRecycle ? 1 : 0
       }
       this.$http({url: `/article/list`, type: 'post', params}).then(res => {
         this.data = res.data.records
         this.total = res.data.total
       })
     },
-    getRecData() {
-      // 获取回收站列表数据
-    },
-    selAll(selection) {
-      //全选按钮选中
-      console.log("点击全选时触发: ", selection);
-      this.showBatch = true //显示批量操作
-    },
-    cancelSelAll(selection) {
-      //全选按钮取消选中
-      console.log("点击取消全选时触发: ", selection);
-      this.showBatch = false //隐藏批量操作
-    },
     selChange(selection) {
       //任意项选中状态改变
-      console.log("已选项数据: ", selection);
       this.ids = []
       selection.forEach(item => {
         this.ids.push(item.id)
-      })
-      
+      })      
       if(selection.length > 1) {
         this.showBatch = true
       }else {
@@ -270,14 +253,31 @@ export default {
       this.pageIndex = 1
       this.getArtData(this.category, this.status, this.type)
     },
-    screening() { //根据条件筛选数据
+    screening() { //根据条件筛选数据      
       this.getArtData(this.category, this.status, this.type)
     },
     delArticle() { //删除文章
       const data = {
         ids: this.ids.join(',')
       }
-      this.$http({url: '/article/delete', type: 'POST', data}).then(res => {
+      let url = ''
+      if(!this.isRecycle) { //文章删除接口
+        url = '/article/delete'
+      }else { //回收站中文章删除接口
+        url = '/article/finalDelete'
+      }
+      this.$http({url, type: 'POST', data}).then(res => {
+        this.showBatch = false
+        this.$Message.success(res.message)
+        this.getArtData(this.category, this.status, this.type)
+      })
+    },
+    revert() { //还原文章
+      const data = {
+        ids: this.ids.join(',')
+      }
+      this.$http({url: '/article/revert', type: 'post', data}).then(res => {
+        this.showBatch = false
         this.$Message.success(res.message)
         this.getArtData(this.category, this.status, this.type)
       })

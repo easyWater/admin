@@ -10,12 +10,12 @@
                 站点内容统计：
             </li>
             <li>
-                <b>10</b>篇文章（<b>2</b>篇草稿）
+                <b>{{siteCount.articleCount}}</b>篇文章（<b>{{siteCount.unfinishedCount}}</b>篇草稿）
             </li>
             <li>
-                <b>6</b>个分类
+                <b>{{siteCount.categoryCount}}</b>个分类
             </li><li>
-                <b>5</b>条评论（<b>1</b>条待审核）
+                <b>{{siteCount.commentCount}}</b>条评论（<b>{{siteCount.auditingCount}}</b>条待审核）
             </li>
         </ul>
     </section>
@@ -23,7 +23,23 @@
 
 <script>
 export default {
-    
+    data() {
+        return {
+            siteCount: {
+
+            }
+        }
+    },
+    created() {
+        this.getSiteCount()
+    },
+    methods: {
+        getSiteCount() {
+            this.$http({url: `/dashboard/stat`, type: 'post'}).then(res => {
+                this.siteCount = res.data
+            })
+        }
+    }
 }
 </script>
 
