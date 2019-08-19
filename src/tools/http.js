@@ -20,7 +20,8 @@ axios.interceptors.request.use(
 const http = ({ url, type, params, data, withCredentials }) => {
   return new Promise((resolve, reject) => {
     axios({
-      baseURL: 'http://192.168.1.103:8882',
+      // baseURL: 'http://192.168.1.103:8882',
+      baseURL: 'http://47.106.79.168:10002',
       timeout: 2500,
       url,
       method: type || 'get',

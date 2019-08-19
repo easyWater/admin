@@ -3,7 +3,7 @@
         <section class="slogan">
             <h1>One Belt, One Road</h1>
             <h4>Thoughts, stories and ideas.</h4>
-            <a href="javascript: void(0);">写文章</a>
+            <router-link to="/addArticle">写文章</router-link>
         </section>
         <ul class="statistical">
             <li>
