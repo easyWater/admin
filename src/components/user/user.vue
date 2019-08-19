@@ -10,18 +10,29 @@
 
         <template v-slot:addForm>
             <Form ref="form" :model="form" :rules="rules" label-position="top">
+                <FormItem label="头像" prop="headImg">
+                    <Upload action="//jsonplaceholder.typicode.com/posts/">
+                       <img v-if="form.url" class="up-img" :src="form.url" alt="">
+                       <section v-if="!form.url" class="head-img">
+                         <Icon type="md-add" class="add-icon" />               
+                       </section>
+                    </Upload>
+                </FormItem>
                 <FormItem label="邮箱" prop="email" label-for="email">
                     <Input type="email" v-model="form.email" size="large" element-id="email" placeholder="邮箱"></Input>
-                </FormItem>
-                <FormItem label="别名" prop="slug" label-for="slug">
-                    <Input type="text" v-model="form.slug" size="large" element-id="slug" placeholder="slug"></Input>
-                </FormItem>
+                </FormItem>                
                 <FormItem label="昵称" prop="nickname" label-for="nickname">
                     <Input type="text" v-model="form.nickname" size="large" element-id="nickname" placeholder="昵称"></Input>
                 </FormItem>
                 <FormItem label="密码" prop="password" label-for="password">
                     <Input type="password" v-model="form.password" size="large" element-id="password" placeholder="密码"></Input>
-                </FormItem>                    
+                </FormItem> 
+                <FormItem label="状态" prop="status">
+                    <RadioGroup v-model="form.status">
+                        <Radio label="1">启用</Radio>
+                        <Radio label="0">停用</Radio>
+                    </RadioGroup>
+                </FormItem>                   
                 <FormItem>
                     <Button type="primary" @click="handleSubmit('form')">提交</Button>
                     <Button @click="handleReset('form')" style="margin-left: 8px">重置</Button>
@@ -45,19 +56,20 @@ export default {
   data() {
     return {
       form: {
+        url: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552559440307&di=ebd3417add75f16edb402a75dc164cd2&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201807%2F14%2F20180714142138_CYFTh.thumb.700_0.jpeg',
         email: "",
-        slug: "",
         nickname: "",
-        password: ""
+        password: "",
+        status: '1'
       },
       rules: {
         email: [
           { required: true, trigger: "blur", message: "请输入邮箱" },
           { type: "email", trigger: "blur", message: "请输入正确的邮箱格式" }
         ],
-        slug: [{ required: true, trigger: "blur", message: "请输入别名" }],
         nickname: [{ required: true, trigger: "blur", message: "请输入昵称" }],
-        password: [{ required: true, trigger: "blur", message: "请输入密码" }]
+        password: [{ required: true, trigger: "blur", message: "请输入密码" }],
+        status: [{ trigger: "change", message: "请选择状态" }],
       },
       loading: false, //表格加载数据状态
       columns: [
@@ -86,16 +98,19 @@ export default {
           key: "email"
         },
         {
-          title: "别名",
-          key: "slug"
-        },
-        {
           title: "昵称",
           key: "nickname"
         },
         {
           title: "状态",
-          key: "status"
+          key: "status",
+          render: (h, params) => {
+            if(params.row.status === 0) {
+              return h('span', {}, '禁用')
+            }else {
+              return h('span', {}, '启用')
+            }
+          }
         },
         {
           title: "操作",
@@ -143,25 +158,22 @@ export default {
           headImg:
             "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552559353782&di=58f8ec135f8d6aa2248fe8ba275cddcd&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201803%2F26%2F20180326120657_cuhhd.png",
           email: "1234567890@qq.com",
-          slug: "虎太郎1",
           nickname: "小宝宝",
-          status: "启用"
+          status: 1
         },
         {
           headImg:
             "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552559409425&di=2e1c4df2916ea41296c8208a8d04386a&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201805%2F05%2F20180505122857_dfftg.thumb.700_0.jpg",
           email: "1234567890@qq.com",
-          slug: "虎太郎2",
           nickname: "小宝宝",
-          status: "禁用"
+          status: 0
         },
         {
           headImg:
             "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552559440307&di=ebd3417add75f16edb402a75dc164cd2&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201807%2F14%2F20180714142138_CYFTh.thumb.700_0.jpeg",
           email: "1234567890@qq.com",
-          slug: "虎太郎3",
           nickname: "小宝宝",
-          status: "启用"
+          status: 1
         }
       ],
       showBatch: false
@@ -204,5 +216,20 @@ export default {
 </script>
 
 <style lang="scss" type="text/css" scoped>
+.up-img {
+  width: 99px;
+  cursor: pointer;
+}
+.head-img {
+  width: 99px;
+  height: 99px;
+  border: 1px solid #dcdee2;
+  text-align: center;
+  line-height: 99px;
+  background-color: #f8f8f9;
+  .add-icon {
+    font-size: 26px;
+  }
+}
 </style>
 
