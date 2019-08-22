@@ -12,6 +12,9 @@ import router from './router/router'
 import axios from './tools/http'
 Vue.prototype.$http = axios
 
+Vue.prototype.$baseUrl = 'http://47.106.79.168:10002'
+// baseURL: 'http://192.168.1.103:8882'
+
 import iView from 'iview';
 import 'iview/dist/styles/iview.css';
 Vue.use(iView);

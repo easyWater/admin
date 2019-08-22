@@ -10,10 +10,10 @@
 
         <template v-slot:addForm>
             <Form ref="form" :model="form" :rules="rules" label-position="top">
-                <FormItem label="头像" prop="headImg">
-                    <Upload action="//jsonplaceholder.typicode.com/posts/">
-                       <img v-if="form.url" class="up-img" :src="form.url" alt="">
-                       <section v-if="!form.url" class="head-img">
+                <FormItem label="头像" prop="headImage">
+                    <Upload :action="`${$baseUrl}/file/upload`" name="file" :show-upload-list="false" accept="image/*" :on-success="imgUpSuccess" :on-error="imgUpError">
+                       <img v-if="form.headImage" class="up-img" :src="form.headImage" alt="">
+                       <section v-if="!form.headImage" class="head-img">
                          <Icon type="md-add" class="add-icon" />               
                        </section>
                     </Upload>
@@ -21,28 +21,27 @@
                 <FormItem label="邮箱" prop="email" label-for="email">
                     <Input type="email" v-model="form.email" size="large" element-id="email" placeholder="邮箱"></Input>
                 </FormItem>                
-                <FormItem label="昵称" prop="nickname" label-for="nickname">
-                    <Input type="text" v-model="form.nickname" size="large" element-id="nickname" placeholder="昵称"></Input>
+                <FormItem label="用户名" prop="username" label-for="username">
+                    <Input type="text" v-model="form.username" size="large" element-id="username" placeholder="用户名"></Input>
                 </FormItem>
                 <FormItem label="密码" prop="password" label-for="password">
                     <Input type="password" v-model="form.password" size="large" element-id="password" placeholder="密码"></Input>
                 </FormItem> 
                 <FormItem label="状态" prop="status">
                     <RadioGroup v-model="form.status">
-                        <Radio label="1">启用</Radio>
-                        <Radio label="0">停用</Radio>
+                        <Radio :label="1">启用</Radio>
+                        <Radio :label="0">停用</Radio>
                     </RadioGroup>
                 </FormItem>                   
                 <FormItem>
-                    <Button type="primary" @click="handleSubmit('form')">提交</Button>
+                    <Button type="primary" @click="handleSubmit('form')">{{id ? '修改' : '新增'}}</Button>
                     <Button @click="handleReset('form')" style="margin-left: 8px">重置</Button>
                 </FormItem>
             </Form>
         </template>
 
         <template v-slot:tb>
-            <Button v-show="showBatch" type="error" style="margin-bottom: 10px">批量删除</Button>
-            <Table border :columns="columns" :data="data" :loading="loading" @on-select-all="selAll" @on-select-all-cancel="cancelSelAll" @on-selection-change="selChange"></Table>
+            <Table border :columns="columns" :data="data" :loading="loading"></Table>
         </template>
     </common>
 </template>
@@ -50,41 +49,37 @@
 <script>
 import common from "../common/common.vue";
 export default {
+  name: 'user',
   components: {
     common
   },
   data() {
     return {
       form: {
-        url: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552559440307&di=ebd3417add75f16edb402a75dc164cd2&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201807%2F14%2F20180714142138_CYFTh.thumb.700_0.jpeg',
+        headImage: '',
         email: "",
-        nickname: "",
+        username: "",
         password: "",
-        status: '1'
+        status: 1
       },
       rules: {
         email: [
           { required: true, trigger: "blur", message: "请输入邮箱" },
           { type: "email", trigger: "blur", message: "请输入正确的邮箱格式" }
         ],
-        nickname: [{ required: true, trigger: "blur", message: "请输入昵称" }],
+        username: [{ required: true, trigger: "blur", message: "请输入用户名" }],
         password: [{ required: true, trigger: "blur", message: "请输入密码" }],
-        status: [{ trigger: "change", message: "请选择状态" }],
       },
       loading: false, //表格加载数据状态
       columns: [
         {
-          type: "selection",
-          width: 50
-        },
-        {
           title: "头像",
-          key: "headImg",
+          key: "headImage",
           align: "center",
           render: (h, params) => {
             return h("img", {
               attrs: {
-                src: params.row.headImg
+                src: params.row.headImage
               },
               style: {
                 width: "80px",
@@ -98,8 +93,8 @@ export default {
           key: "email"
         },
         {
-          title: "昵称",
-          key: "nickname"
+          title: "用户名",
+          key: "username"
         },
         {
           title: "状态",
@@ -129,7 +124,7 @@ export default {
                   },
                   on: {
                     click: () => {
-                      console.log("编辑", params.index, params.row);
+                      this.getDetail(params.row.id)
                     }
                   }
                 },
@@ -143,7 +138,7 @@ export default {
                   },
                   on: {
                     click: () => {
-                      console.log("删除", params.index, params.row);
+                      this.delRow(params.row.id)
                     }
                   }
                 },
@@ -154,39 +149,30 @@ export default {
         }
       ],
       data: [
-        {
-          headImg:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552559353782&di=58f8ec135f8d6aa2248fe8ba275cddcd&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201803%2F26%2F20180326120657_cuhhd.png",
-          email: "1234567890@qq.com",
-          nickname: "小宝宝",
-          status: 1
-        },
-        {
-          headImg:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552559409425&di=2e1c4df2916ea41296c8208a8d04386a&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201805%2F05%2F20180505122857_dfftg.thumb.700_0.jpg",
-          email: "1234567890@qq.com",
-          nickname: "小宝宝",
-          status: 0
-        },
-        {
-          headImg:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552559440307&di=ebd3417add75f16edb402a75dc164cd2&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201807%2F14%2F20180714142138_CYFTh.thumb.700_0.jpeg",
-          email: "1234567890@qq.com",
-          nickname: "小宝宝",
-          status: 1
-        }
       ],
-      showBatch: false
+      id: null, //编辑时存在
     };
+  },
+  created() {
+    this.getList()
   },
   methods: {
     handleSubmit(name) {
       //表单提交
       this.$refs[name].validate(valid => {
         if (valid) {
-          console.log("验证通过，提交数据...");
-        } else {
-          console.log("验证失败");
+          const url = `/user/save`
+          let params = JSON.parse(JSON.stringify(this.form))
+          if(this.id) {
+            params.id = this.id
+          }
+          this.$http({url, type: 'POST', params}).then(res => {            
+            this.getList()
+            this.$Message.success('操作成功')
+            this.$refs[name].resetFields()
+            this.id = null
+          })
+        } else {     
         }
       });
     },
@@ -194,22 +180,44 @@ export default {
       // 重置表单
       this.$refs[name].resetFields();
     },
-    selAll(selection) {
-      //全选按钮选中
-      console.log("selection: ", selection);
-      this.showBatch = true; //显示批量删除
+    getList() { //获取表格数据
+      this.loading = true
+      const url = `/user/list`
+      this.$http({url, type: 'post'}).then(res => {
+        this.data = res.data.records
+        this.loading = false
+      })
     },
-    cancelSelAll(selection) {
-      //全选按钮取消选中
-      console.log("selection: ", selection);
-      this.showBatch = false; //隐藏批量删除
+    imgUpSuccess(response) { //图片上传成功
+      this.form.headImage = response.data.url
+      this.$Message.success('上传成功')
     },
-    selChange(selection) { //只要选中项发生变化时就会触发
-        if(selection.length > 1) {
-            this.showBatch = true
-        }else {
-            this.showBatch = false
-        }
+    imgUpError(error, file, fileList) { //图片上传失败
+      this.$Message.error('上传失败,请稍后再试...', error)
+    },
+    delRow(id) { //删除
+      this.$Modal.confirm({
+          title: '提示',
+          content: '确认删除吗?',
+          onOk: () => {
+              this.$http({url: `/user/delete`, type: 'POST', params: {ids: id} }).then(res => {
+                this.getList()
+                this.$Message.success('删除成功')    
+              })
+          },
+          onCancel: () => {
+          }
+      })
+    },
+    getDetail(id) { //详情
+      this.id = id
+      this.$http({url: `/user/detail`, type: 'post', params: {id}}).then(res => {
+        this.form.email = res.data.email
+        this.form.headImage = res.data.headImage
+        this.form.username = res.data.username
+        this.form.password = res.data.password
+        this.form.status = res.data.status
+      })
     }
   }
 };

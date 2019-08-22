@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import axios from 'axios'
 import Qs from 'Qs'
 import { Message } from 'iview'
@@ -20,8 +21,7 @@ axios.interceptors.request.use(
 const http = ({ url, type, params, data, withCredentials }) => {
   return new Promise((resolve, reject) => {
     axios({
-      // baseURL: 'http://192.168.1.103:8882',
-      baseURL: 'http://47.106.79.168:10002',
+      baseURL: Vue.prototype.$baseUrl,
       timeout: 2500,
       url,
       method: type || 'get',
