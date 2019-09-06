@@ -211,7 +211,7 @@ export default {
         page: 1,
         size: -1
       }
-      this.$http({url: '/category/list', type: 'POST', data}).then(res => {
+      this.$http({url: '/category/list', data}).then(res => {
         this.categoryList = res.data.records
       })
     },
@@ -225,7 +225,7 @@ export default {
         page: this.pageIndex,
         isDelete: this.isRecycle ? 1 : 0
       }
-      this.$http({url: `/article/list`, type: 'post', params}).then(res => {
+      this.$http({url: `/article/list`, params}).then(res => {
         this.data = res.data.records
         this.total = res.data.total
       })
@@ -266,7 +266,7 @@ export default {
       }else { //回收站中文章删除接口
         url = '/article/finalDelete'
       }
-      this.$http({url, type: 'POST', data}).then(res => {
+      this.$http({url, data}).then(res => {
         this.showBatch = false
         this.$Message.success(res.message)
         this.getArtData(this.category, this.status, this.type)
@@ -276,7 +276,7 @@ export default {
       const data = {
         ids: this.ids.join(',')
       }
-      this.$http({url: '/article/revert', type: 'post', data}).then(res => {
+      this.$http({url: '/article/revert', data}).then(res => {
         this.showBatch = false
         this.$Message.success(res.message)
         this.getArtData(this.category, this.status, this.type)

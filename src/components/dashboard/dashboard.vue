@@ -35,7 +35,7 @@ export default {
     },
     methods: {
         getSiteCount() {
-            this.$http({url: `/dashboard/stat`, type: 'post'}).then(res => {
+            this.$http({url: `/dashboard/stat`}).then(res => {
                 this.siteCount = res.data
             })
         }

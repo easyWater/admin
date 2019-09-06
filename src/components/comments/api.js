@@ -5,7 +5,7 @@ import http from '../../tools/http'
  */
 export function list(params) {
     const url = `/comment/list`    
-    return http({ url, type: 'post', params})
+    return http({ url, params})
 }
 
 /**
@@ -13,7 +13,7 @@ export function list(params) {
  */
 export function audit(params) {
     const url = `/comment/audit`
-    return http({url, params, type: 'POST'})
+    return http({url, params, })
 }
 
 /**
@@ -21,5 +21,5 @@ export function audit(params) {
  */
 export function del(params) {
     const url = `/comment/delete`
-    return http({url, params, type: 'post'})
+    return http({url, params})
 }

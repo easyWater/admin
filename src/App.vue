@@ -32,8 +32,9 @@
               <li>
                 <a href="javascript: void(0);" class="a-menu"><i class="iconfont icon-shezhi lf"></i>设置<i class="iconfont icon-you rg"></i></a>
                 <ul>
-                  <li><router-link to="/navMenu">导航菜单</router-link></li>
-                  <li><router-link to="/siteSet">网站设置</router-link></li>                  
+                  <!-- <li><router-link to="/navMenu">导航菜单</router-link></li>
+                  <li><router-link to="/siteSet">网站设置</router-link></li> -->
+                  <li><router-link to="/permissionList">权限管理</router-link></li>
                 </ul>
               </li>
             </ul>

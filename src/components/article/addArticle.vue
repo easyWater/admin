@@ -138,7 +138,7 @@ export default {
         page: 1,
         size: -1
       }
-      this.$http({url: '/category/list', type: 'POST', data}).then(res => {
+      this.$http({url: '/category/list', data}).then(res => {
         this.categoryList = res.data.records
       })
     },
@@ -188,13 +188,13 @@ export default {
         data.id = this.id
       }
 
-      this.$http({url: '/article/save', type: 'POST', data}).then(res => {
+      this.$http({url: '/article/save', data}).then(res => {
         this.$Message.success(res.message)
         this.$router.push('/article/list')
       })
     },
     getArtData() { //获取文章信息
-      this.$http({url: '/article/detail', type: 'post', data: {id: this.id}}).then(res => {
+      this.$http({url: '/article/detail', data: {id: this.id}}).then(res => {
         this.article.title = res.data.title
         this.article.content = res.data.content
         this.article.status = res.data.isFinished

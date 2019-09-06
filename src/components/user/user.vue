@@ -166,7 +166,7 @@ export default {
           if(this.id) {
             params.id = this.id
           }
-          this.$http({url, type: 'POST', params}).then(res => {            
+          this.$http({url, params}).then(res => {            
             this.getList()
             this.$Message.success('操作成功')
             this.$refs[name].resetFields()
@@ -183,7 +183,7 @@ export default {
     getList() { //获取表格数据
       this.loading = true
       const url = `/user/list`
-      this.$http({url, type: 'post'}).then(res => {
+      this.$http({url}).then(res => {
         this.data = res.data.records
         this.loading = false
       })
@@ -200,7 +200,7 @@ export default {
           title: '提示',
           content: '确认删除吗?',
           onOk: () => {
-              this.$http({url: `/user/delete`, type: 'POST', params: {ids: id} }).then(res => {
+              this.$http({url: `/user/delete`, params: {ids: id} }).then(res => {
                 this.getList()
                 this.$Message.success('删除成功')    
               })
@@ -211,7 +211,7 @@ export default {
     },
     getDetail(id) { //详情
       this.id = id
-      this.$http({url: `/user/detail`, type: 'post', params: {id}}).then(res => {
+      this.$http({url: `/user/detail`, params: {id}}).then(res => {
         this.form.email = res.data.email
         this.form.headImage = res.data.headImage
         this.form.username = res.data.username

@@ -24,7 +24,7 @@ const http = ({ url, type, params, data, withCredentials }) => {
       baseURL: Vue.prototype.$baseUrl,
       timeout: 2500,
       url,
-      method: type || 'get',
+      method: type || 'post',
       params,
       data,
       withCredentials,

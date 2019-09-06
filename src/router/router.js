@@ -13,7 +13,8 @@ const router = new VueRouter({
         {path: '/comments', component: () => import('../components/comments/comments.vue')},
         {path: '/user', component: () => import('../components/user/user.vue')},
         {path: '/navMenu', component: () => import('../components/navMenu/navMenu.vue')},
-        {path: '/siteSet', component: () => import('../components/siteSet/siteSet.vue')}
+        {path: '/siteSet', component: () => import('../components/siteSet/siteSet.vue')},
+        {path: '/permissionList', component: () => import('../components/permission/list.vue')}
     ]
 })
 

@@ -136,7 +136,7 @@ export default {
             //编辑
             data.id = this.id
           }
-          this.$http({ url: '/category/save', type: 'POST', data }).then(
+          this.$http({ url: '/category/save', data }).then(
             res => {
               this.$Message.success(res.message)
               this.getData()
@@ -170,7 +170,7 @@ export default {
         page: this.pageIndex,
         size: this.pageSize
       }
-      this.$http({ url: '/category/list', type: 'POST', data }).then(res => {
+      this.$http({ url: '/category/list', data }).then(res => {
         this.data = res.data.records
         this.total = res.data.total
         this.loading = false
@@ -178,7 +178,7 @@ export default {
     },
     getCataData(id) {
       //根据id查询分类详情
-      this.$http({ url: '/category/detail', type: 'POST', data: { id } }).then(
+      this.$http({ url: '/category/detail', data: { id } }).then(
         res => {
           this.form.name = res.data.name
           this.form.slug = res.data.alias
@@ -191,7 +191,7 @@ export default {
       const data = {
         ids: this.ids.join(',')
       }
-      this.$http({ url: '/category/delete', type: 'POST', data }).then(res => {
+      this.$http({ url: '/category/delete', data }).then(res => {
         this.$Message.success(res.message)
         this.getData()
       })
