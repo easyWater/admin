@@ -35,6 +35,7 @@
                   <!-- <li><router-link to="/navMenu">导航菜单</router-link></li>
                   <li><router-link to="/siteSet">网站设置</router-link></li> -->
                   <li><router-link to="/permissionList">权限管理</router-link></li>
+                  <li><router-link to="/role">角色管理</router-link></li>
                 </ul>
               </li>
             </ul>

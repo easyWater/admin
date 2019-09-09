@@ -6,7 +6,7 @@
     <section class="pageMain">
       <Tree :data="data" :render="renderContent"></Tree>
     </section>
-    <Modal v-model="isModel" title="新增" :footer-hide="true" @on-cancel="cancelSub">
+    <Modal v-model="isModel" :title="parentId ? '新增' : '编辑'" :footer-hide="true" @on-cancel="cancelSub">
       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
         <FormItem label="权限名称" prop="name">
           <Input v-model="formValidate.name" placeholder="请输入权限名称"></Input>
@@ -33,6 +33,7 @@ export default {
         name: [{ required: true, message: "请输入权限名称", trigger: "blur" }]
       },
       parentId: "", //父节点的id
+      editeId: '', //编辑节点的id
       data: [
         {
           title: "parent 1",
@@ -74,11 +75,22 @@ export default {
                         type: "primary"
                       }),
                       style: {
-                        width: "64px"
+                        width: "64px",
+                        marginRight: '8px'
                       },
                       on: {
                         click: () => {
                           this.append(root, node, data);
+                        }
+                      }
+                    }),
+                    h("Button", {
+                      props: Object.assign({}, this.buttonProps, {
+                        icon: "md-create"
+                      }),
+                      on: {
+                        click: () => {
+                          this.edite(root, node, data);
                         }
                       }
                     })
@@ -183,9 +195,22 @@ export default {
                 props: Object.assign({}, this.buttonProps, {
                   icon: "ios-remove"
                 }),
+                style: {
+                  marginRight: "8px"
+                },
                 on: {
                   click: () => {
                     this.remove(root, node, data);
+                  }
+                }
+              }),
+              h("Button", {
+                props: Object.assign({}, this.buttonProps, {
+                  icon: "md-create"
+                }),
+                on: {
+                  click: () => {
+                    this.edite(root, node, data);
                   }
                 }
               })
@@ -195,8 +220,13 @@ export default {
       );
     },
     append(root, node, data) {
-      this.isModel = true;
       this.parentId = root.find(el => el === node).parent;
+      this.isModel = true;
+      // console.log('root, node, data', root, node, data)
+    },
+    edite(root, node, data) {
+      this.editeId = data.id
+      this.isModel = true
     },
     remove(root, node, data) {
       this.$Modal.confirm({
@@ -224,6 +254,7 @@ export default {
           this.$http({ url, params }).then(res => {
             //   更新结构
             this.getData();
+            this.parentId = ''
             // 隐藏弹窗
             this.isModel = false;
           });
