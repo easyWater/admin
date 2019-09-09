@@ -190,7 +190,7 @@ export default {
 
       this.$http({url: '/article/save', data}).then(res => {
         this.$Message.success(res.message)
-        this.$router.push('/article/list')
+        this.$router.push('/layout/article/list')
       })
     },
     getArtData() { //获取文章信息

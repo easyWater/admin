@@ -3,7 +3,7 @@
         <section class="pageTitle">
             <h2 v-cloak>{{isRecycle ? '回收站' : '所有文章'}}</h2>
             <!-- <a v-if="!isRecycle" href="javascript: void(0);">写文章</a> -->
-            <router-link v-if="!isRecycle" to="/addArticle">写文章</router-link>
+            <router-link v-if="!isRecycle" to="/layout/addArticle">写文章</router-link>
         </section>
         <section class="toolbar">
             <span v-show="showBatch" style="margin-right: 20px;">
@@ -112,7 +112,7 @@ export default {
                         this.revert()
                       }else {
                          //文章列表点击编辑后操作
-                         this.$router.push(`/addArticle?articleId=${params.row.id}`)
+                         this.$router.push(`/layout/addArticle?articleId=${params.row.id}`)
                       }
                     }
                   }
