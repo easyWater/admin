@@ -2,13 +2,15 @@ import Vue from 'vue'
 import axios from 'axios'
 import Qs from 'Qs'
 import { Message } from 'iview'
+import store from '../vuex/store'
+import router from '../router/router'
 
 // 添加请求拦截器
 axios.interceptors.request.use(
   function(config) {
     // 在发送请求之前做些什么    
     config.headers.token = '149b116f87ec48d5ab89b7211e3fa59f'
-    // config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
+    // config.headers.token = store.getters.getToken
     // console.log('config:', config)
     return config
   },
@@ -30,14 +32,6 @@ const http = ({ url, type, params, data, withCredentials }) => {
       withCredentials,
       transformRequest: [
         function(data) {
-          // const params = new URLSearchParams
-          // for (let it in data){
-          //   params.append(it, data[it]);
-          // } 
-          // console.log('params', params, 'Qs', Qs.stringify(data))
-          // 对 data 进行JSON字符串转换
-          //   console.log('data', data, 'JSON', JSON.stringify(data), 'Qs', Qs.stringify(data))
-          // console.log('Qs.stringify(data)', Qs.stringify(data))
           return Qs.stringify(data)
         }
       ],
@@ -48,6 +42,9 @@ const http = ({ url, type, params, data, withCredentials }) => {
       .then(res => {
         if (res.data.code === 200) {
           resolve(res.data)
+        }else if(res.data.code === 400004) { //登录超时
+          Message.error('登录失效,请重新登录')
+          router.push('/login')
         } else {
           Message.error(res.data.message);
           reject(res.data)

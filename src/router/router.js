@@ -2,6 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
+import store from '../vuex/store'
+
 const router = new VueRouter({
     routes: [
         {path: '/', redirect: '/layout/dashboard'},
@@ -20,6 +22,13 @@ const router = new VueRouter({
             {path: 'role', component: () => import('../components/role/role.vue')}
         ]}        
     ]
+})
+
+router.beforeEach((to, from, next) => {
+    if(from.path != '/login') {
+        store.commit('setLastUrl', from.path)
+    }
+    next()
 })
 
 export default router
